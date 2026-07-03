@@ -1,0 +1,7 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">🎉 A spot opened up — you're in!</div>
+<p>Hi {{ volunteer_name }},</p>
+<p>Good news! A spot opened up in <strong>{{ program_title }}</strong> by <strong>{{ ngo_name }}</strong>, and you've been automatically moved from the waitlist into the program.</p>
+<a class="button" href="{{ frontend_url }}/programs">View Program</a>
+{% endblock %}

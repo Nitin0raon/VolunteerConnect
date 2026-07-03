@@ -1,0 +1,8 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">🎉 Your NGO has been approved!</div>
+<p>Hi {{ organization_name }},</p>
+<p>Great news — your NGO profile has been reviewed and approved by our admin team. You can now create and manage volunteer programs on the platform.</p>
+<a class="button" href="{{ frontend_url }}/dashboard">Go to Dashboard</a>
+<p>Thank you for joining us in making a difference.</p>
+{% endblock %}

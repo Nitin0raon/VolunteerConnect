@@ -1,0 +1,7 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">You've left a program</div>
+<p>Hi {{ volunteer_name }},</p>
+<p>You have left <strong>{{ program_title }}</strong>. We're sorry to see you go — feel free to join another program anytime.</p>
+<a class="button" href="{{ frontend_url }}/programs">Browse Programs</a>
+{% endblock %}

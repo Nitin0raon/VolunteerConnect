@@ -1,0 +1,8 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">Update on your NGO application</div>
+<p>Hi {{ organization_name }},</p>
+<p>After review, we're unable to approve your NGO registration at this time.</p>
+<p><strong>Reason:</strong> {{ reason }}</p>
+<p>You're welcome to update your profile and reach out to our support team for further assistance.</p>
+{% endblock %}

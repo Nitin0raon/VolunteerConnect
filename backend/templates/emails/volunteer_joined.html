@@ -1,0 +1,13 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+{% if status == 'waitlisted' %}You're on the waitlist!{% else %}You've joined a program!{% endif %}
+</div>
+<p>Hi {{ volunteer_name }},</p>
+{% if status == 'waitlisted' %}
+<p>The program <strong>{{ program_title }}</strong> by <strong>{{ ngo_name }}</strong> is currently full. You've been added to the waitlist and will be notified automatically if a spot opens up.</p>
+{% else %}
+<p>You have successfully joined <strong>{{ program_title }}</strong> by <strong>{{ ngo_name }}</strong>. We're excited to have you on board!</p>
+{% endif %}
+<a class="button" href="{{ frontend_url }}/programs">View Program</a>
+{% endblock %}
