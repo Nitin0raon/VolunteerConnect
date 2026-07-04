@@ -16,7 +16,10 @@ DATABASES['default']['OPTIONS'].setdefault('connect_timeout', 10)
 DATABASES['default'].setdefault('CONN_MAX_AGE', 60)
 
 
-
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default=""
+).split(",")
 
 # Security
 SECURE_BROWSER_XSS_FILTER = True
