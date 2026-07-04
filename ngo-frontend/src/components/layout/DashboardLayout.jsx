@@ -32,7 +32,7 @@ export default function DashboardLayout({ children, title }) {
               className="absolute top-0 left-0 bottom-0 w-72 bg-bg-secondary border-r border-subtle"
               onClick={(e) => e.stopPropagation()}
             >
-              <DashboardSidebar />
+              <DashboardSidebar mobile />
             </motion.div>
           </motion.div>
         )}

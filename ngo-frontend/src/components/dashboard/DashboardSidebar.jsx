@@ -28,7 +28,7 @@ const volunteerLinks = [
   { icon: HiUser, label: 'Profile', to: '/volunteer/profile' },
 ]
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ mobile = false }) {
   const { isNGO, user, logout } = useAuth()
   const navigate = useNavigate()
   const links = isNGO ? ngoLinks : volunteerLinks
@@ -40,7 +40,9 @@ export default function DashboardSidebar() {
       initial={{ x: -60, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="hidden lg:flex flex-col w-64 min-h-screen bg-bg-secondary border-r border-subtle fixed top-0 left-0 z-30"
+      className={mobile
+        ? 'flex flex-col w-full h-full bg-bg-secondary border-r border-subtle'
+        : 'hidden lg:flex flex-col w-64 min-h-screen bg-bg-secondary border-r border-subtle fixed top-0 left-0 z-30'}
     >
       {/* Logo */}
       <div className="p-6 border-b border-subtle">
