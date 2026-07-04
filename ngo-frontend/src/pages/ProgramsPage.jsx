@@ -3,12 +3,20 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { HiSearch, HiFilter, HiX } from 'react-icons/hi'
 import PublicLayout from '../components/layout/PublicLayout'
 import ProgramCard from '../components/ui/ProgramCard'
-import { SkeletonCard, EmptyState, Pagination, Badge } from '../components/ui/index'
+import { SkeletonCard, EmptyState, Pagination } from '../components/ui/index'
 import { programService } from '../services/programService'
 import { useDebounce } from '../hooks/useDebounce'
 import { useAuth } from '../context/AuthContext'
 import { staggerContainer, fadeUp } from '../utils/motion'
-import { AnimatePresence as AP } from 'framer-motion'
+
+/* Same tokens as HomePage / Navbar / Login / Register.
+   Amber is used sparingly here — a small dot, a focus ring, a link — not
+   as a fill color, per the "keep it calm" note. */
+const pageBg = '#EEECE4'
+const ink = '#141310'
+const inkSoft = '#6B685F'
+const amber = '#E8A33D'
+const line = '#DEDACB'
 
 const STATUS_OPTIONS = ['', 'active', 'completed', 'cancelled']
 
@@ -55,7 +63,7 @@ export default function ProgramsPage() {
     try {
       const { data } = await programService.myParticipations()
       const map = {}
-      ;(data.results || []).forEach(p => {
+      ;(data.results || []).forEach((p) => {
         if (p.status === 'joined' || p.status === 'waitlisted') map[p.program] = p
       })
       setMyParticipations(map)
@@ -70,8 +78,8 @@ export default function ProgramsPage() {
     setActionLoading(programId)
     try {
       const { data } = await programService.join(programId)
-      const status = data.data?.status
-      showToast(status === 'waitlisted' ? 'Added to waitlist!' : 'Joined successfully!')
+      const s = data.data?.status
+      showToast(s === 'waitlisted' ? 'Added to waitlist!' : 'Joined successfully!')
       await fetchMyParticipations()
       await fetchPrograms()
     } catch (err) {
@@ -97,143 +105,177 @@ export default function ProgramsPage() {
 
   return (
     <PublicLayout>
-      {/* Hero */}
-      <div className="relative pt-32 pb-20 border-b border-subtle overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600&q=80"
-            alt="Programs"
-            className="w-full h-full object-cover opacity-20"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-bg/80 to-bg" />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-6">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-xs uppercase tracking-widest2 text-primary mb-4">Browse Programs</p>
-            <h1 className="text-6xl font-light text-white mb-4">Find your cause</h1>
-            <p className="text-text-secondary text-lg max-w-xl">
-              {count > 0 ? `${count} programs available across India` : 'Discover meaningful volunteer opportunities'}
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        {/* Search + filter bar */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-12">
-          <div className="relative flex-1">
-            <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" size={18} />
-            <input
-              type="text"
-              placeholder="Search programs, NGOs, locations…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-card border border-subtle rounded-full pl-12 pr-4 py-3.5 text-white placeholder-text-secondary/50 focus:outline-none focus:border-primary/40 text-sm"
+      <div style={{ background: pageBg, color: ink }} className="min-h-screen">
+        {/* Hero */}
+        <div className="relative pt-32 pb-16 border-b overflow-hidden" style={{ borderColor: line }}>
+          <div className="absolute inset-0">
+            <img
+              src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600&q=80"
+              alt="Programs"
+              className="w-full h-full object-cover opacity-[0.12]"
             />
-            {search && (
-              <button onClick={() => setSearch('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-white">
-                <HiX size={16} />
-              </button>
-            )}
+            <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${pageBg}CC, ${pageBg})` }} />
           </div>
-          <button
-            onClick={() => setFilterOpen(!filterOpen)}
-            className={`flex items-center gap-2 border rounded-full px-5 py-3.5 text-sm transition-all ${filterOpen ? 'border-primary/40 text-primary bg-primary/5' : 'border-subtle text-text-secondary hover:text-white hover:border-white/20'}`}
-          >
-            <HiFilter size={16} />
-            Filters {status && <span className="w-1.5 h-1.5 bg-primary rounded-full" />}
-          </button>
+          <div className="relative max-w-6xl mx-auto px-6">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+              <p className="text-xs uppercase tracking-[0.25em] font-bold mb-4" style={{ color: inkSoft }}>
+                Browse Programs
+              </p>
+              <h1 className="font-extrabold text-5xl md:text-6xl tracking-tight mb-4">Find your cause</h1>
+              <p className="text-lg max-w-xl" style={{ color: inkSoft }}>
+                {count > 0 ? `${count} programs available across India` : 'Discover meaningful volunteer opportunities'}
+              </p>
+            </motion.div>
+          </div>
         </div>
 
-        {/* Filter panel */}
-        <AnimatePresence>
-          {filterOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden mb-10"
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          {/* Search + filter bar */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-10">
+            <div className="relative flex-1">
+              <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: inkSoft }} size={18} />
+              <input
+                type="text"
+                placeholder="Search programs, NGOs, locations…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-full pl-12 pr-4 py-3.5 text-sm bg-white/70 focus:outline-none focus:ring-2 transition-shadow"
+                style={{ '--tw-ring-color': amber }}
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-70"
+                  style={{ color: inkSoft }}
+                >
+                  <HiX size={16} />
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => setFilterOpen(!filterOpen)}
+              className="flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-medium transition-all"
+              style={
+                filterOpen
+                  ? { background: ink, color: '#fff' }
+                  : { background: 'rgba(255,255,255,0.6)', color: inkSoft }
+              }
             >
-              <div className="bg-card border border-subtle rounded-2xl p-6">
-                <p className="text-xs uppercase tracking-widest text-text-secondary mb-4">Status</p>
-                <div className="flex flex-wrap gap-2">
-                  {STATUS_OPTIONS.map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setStatus(s)}
-                      className={`px-4 py-2 rounded-full text-sm transition-all ${
-                        status === s
-                          ? 'bg-primary text-bg font-medium'
-                          : 'border border-subtle text-text-secondary hover:text-white hover:border-white/20'
-                      }`}
-                    >
-                      {s === '' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Toast */}
-        <AnimatePresence>
-          {toast && (
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.95 }}
-              className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl border text-sm font-medium ${
-                toast.type === 'error'
-                  ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                  : 'bg-primary/10 border-primary/30 text-primary'
-              }`}
-            >
-              {toast.type === 'error' ? '✕' : '✓'} {toast.message}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Grid */}
-        {loading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+              <HiFilter size={16} />
+              Filters {status && <span className="w-1.5 h-1.5 rounded-full" style={{ background: amber }} />}
+            </button>
           </div>
-        ) : programs.length === 0 ? (
-          <EmptyState
-            icon="🔍"
-            title="No programs found"
-            description={search ? `No results for "${search}". Try a different search.` : 'No programs match your filters.'}
-            action={
-              <button onClick={() => { setSearch(''); setStatus('') }} className="text-sm text-primary hover:text-primary-hover transition-colors">
-                Clear filters
-              </button>
-            }
-          />
-        ) : (
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            animate="show"
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {programs.map((program) => (
-              <motion.div key={program.id} variants={fadeUp}>
-                <ProgramCard
-                  program={program}
-                  onJoin={isVolunteer ? handleJoin : null}
-                  onLeave={isVolunteer ? handleLeave : null}
-                  myParticipation={myParticipations[program.id]}
-                  loading={actionLoading === program.id}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
 
-        <Pagination current={page} total={totalPages} onPage={setPage} />
+          {/* Filter panel */}
+          <AnimatePresence>
+            {filterOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden mb-10"
+              >
+                <div className="rounded-2xl p-6 bg-white/60 backdrop-blur-md">
+                  <p className="text-xs uppercase tracking-widest font-semibold mb-4" style={{ color: inkSoft }}>
+                    Status
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {STATUS_OPTIONS.map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setStatus(s)}
+                        className="px-4 py-2 rounded-full text-sm font-medium transition-all"
+                        style={
+                          status === s
+                            ? { background: ink, color: '#fff' }
+                            : { background: 'transparent', border: `1px solid ${line}`, color: inkSoft }
+                        }
+                      >
+                        {s === '' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Toast */}
+          <AnimatePresence>
+            {toast && (
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium shadow-lg backdrop-blur-md"
+                style={
+                  toast.type === 'error'
+                    ? { background: 'rgba(254,242,242,0.95)', border: '1px solid #FCA5A5', color: '#DC2626' }
+                    : { background: 'rgba(255,255,255,0.9)', border: `1px solid ${line}`, color: ink }
+                }
+              >
+                {toast.type === 'error' ? '✕' : '✓'} {toast.message}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Grid */}
+          {loading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+            </div>
+          ) : programs.length === 0 ? (
+            <EmptyState
+              icon="🔍"
+              title="No programs found"
+              description={search ? `No results for "${search}". Try a different search.` : 'No programs match your filters.'}
+              action={
+                <button
+                  onClick={() => { setSearch(''); setStatus('') }}
+                  className="text-sm font-semibold"
+                  style={{ color: amber }}
+                >
+                  Clear filters
+                </button>
+              }
+            />
+          ) : (
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              animate="show"
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {programs.map((program) => (
+                <motion.div key={program.id} variants={fadeUp}>
+                  <ProgramCard
+                    program={program}
+                    onJoin={isVolunteer ? handleJoin : null}
+                    onLeave={isVolunteer ? handleLeave : null}
+                    myParticipation={myParticipations[program.id]}
+                    loading={actionLoading === program.id}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+
+          <Pagination current={page} total={totalPages} onPage={setPage} />
+        </div>
       </div>
     </PublicLayout>
   )
 }
+
+/* NOTE
+   - Removed the unused duplicate `AnimatePresence as AP` import and the
+     unused `Badge` import — neither was referenced in the original file.
+   - Kept amber intentionally minor: a status dot, the "Clear filters" link,
+     and input focus rings — everything else is ink/white/linen, per your
+     note not to lean on bright color here.
+   - ProgramCard / SkeletonCard / EmptyState / Pagination are still your
+     existing components — I didn't have their source, so they'll keep
+     rendering in the old dark-theme styling until those are retheme'd too.
+     Send those over and I'll match them to this palette next.
+*/
