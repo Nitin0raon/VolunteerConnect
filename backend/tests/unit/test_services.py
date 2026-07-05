@@ -130,7 +130,10 @@ class ParticipationServiceTest(TestCase):
     @patch('services.participation_service.invalidate_volunteer_dashboard')
     @patch('services.participation_service.invalidate_ngo_dashboard')
     def test_join_program_success(self, m1, m2, mock_email):
-        participation = ParticipationService.join_program(self.volunteer, self.program.id)
+        participation = ParticipationService.request_join(self.volunteer, self.program.id)
+        self.assertEqual(participation.status, ParticipationStatus.PENDING)
+        # NGO approves request
+        participation = ParticipationService.review_request(participation.id, self.ngo_user, 'accept')
         self.assertEqual(participation.status, ParticipationStatus.JOINED)
         self.program.refresh_from_db()
         self.assertEqual(self.program.current_participants, 1)
@@ -141,20 +144,25 @@ class ParticipationServiceTest(TestCase):
     def test_join_full_program_goes_to_waitlist(self, m1, m2, mock_email):
         v2 = make_volunteer('v2@test.com')
         v3 = make_volunteer('v3@test.com')
-        ParticipationService.join_program(self.volunteer, self.program.id)
-        ParticipationService.join_program(v2, self.program.id)
+        p1 = ParticipationService.request_join(self.volunteer, self.program.id)
+        ParticipationService.review_request(p1.id, self.ngo_user, 'accept')
+        p2 = ParticipationService.request_join(v2, self.program.id)
+        ParticipationService.review_request(p2.id, self.ngo_user, 'accept')
         # Program is now full (capacity=2)
-        p = ParticipationService.join_program(v3, self.program.id)
-        self.assertEqual(p.status, ParticipationStatus.WAITLISTED)
-        self.assertEqual(p.waitlist_position, 1)
+        p3 = ParticipationService.request_join(v3, self.program.id)
+        self.assertEqual(p3.status, ParticipationStatus.PENDING)
+        # NGO approves -> waitlisted
+        p3 = ParticipationService.review_request(p3.id, self.ngo_user, 'accept')
+        self.assertEqual(p3.status, ParticipationStatus.WAITLISTED)
+        self.assertEqual(p3.waitlist_position, 1)
 
     @patch('services.participation_service.EmailService.send_volunteer_joined')
     @patch('services.participation_service.invalidate_volunteer_dashboard')
     @patch('services.participation_service.invalidate_ngo_dashboard')
     def test_double_join_raises(self, m1, m2, mock_email):
-        ParticipationService.join_program(self.volunteer, self.program.id)
+        ParticipationService.request_join(self.volunteer, self.program.id)
         with self.assertRaises(ConflictException):
-            ParticipationService.join_program(self.volunteer, self.program.id)
+            ParticipationService.request_join(self.volunteer, self.program.id)
 
     @patch('services.participation_service.EmailService.send_volunteer_left')
     @patch('services.participation_service.EmailService.send_volunteer_joined')
@@ -164,9 +172,12 @@ class ParticipationServiceTest(TestCase):
     def test_leave_promotes_waitlisted(self, m1, m2, mock_promoted, mock_left, mock_joined):
         v2 = make_volunteer('v2@test.com')
         v3 = make_volunteer('v3@test.com')
-        ParticipationService.join_program(self.volunteer, self.program.id)
-        ParticipationService.join_program(v2, self.program.id)
-        ParticipationService.join_program(v3, self.program.id)  # goes to waitlist
+        p1 = ParticipationService.request_join(self.volunteer, self.program.id)
+        ParticipationService.review_request(p1.id, self.ngo_user, 'accept')
+        p2 = ParticipationService.request_join(v2, self.program.id)
+        ParticipationService.review_request(p2.id, self.ngo_user, 'accept')
+        p3 = ParticipationService.request_join(v3, self.program.id)
+        ParticipationService.review_request(p3.id, self.ngo_user, 'accept') # goes to waitlist
 
         ParticipationService.leave_program(self.volunteer, self.program.id)
 
@@ -176,7 +187,7 @@ class ParticipationServiceTest(TestCase):
 
     def test_join_nonexistent_program_raises(self):
         with self.assertRaises(ResourceNotFoundException):
-            ParticipationService.join_program(self.volunteer, 99999)
+            ParticipationService.request_join(self.volunteer, 99999)
 
     def test_leave_not_enrolled_raises(self):
         with self.assertRaises(ConflictException):

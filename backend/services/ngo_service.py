@@ -129,8 +129,10 @@ class NGOService:
 
     @staticmethod
     def assert_approved(user):
-        """Get the NGO profile — no approval check needed."""
+        """Get the NGO profile and check if it is approved."""
         profile = NGORepository.get_by_user(user)
         if not profile:
             raise ResourceNotFoundException('NGO profile not found. Please complete your profile first.')
+        if profile.status != NGOStatus.APPROVED:
+            raise PermissionDeniedException('Your NGO profile must be approved to perform this action.')
         return profile

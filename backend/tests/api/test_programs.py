@@ -126,7 +126,7 @@ class ParticipationAPITest(APITestCase):
         self.client.force_authenticate(user=self.volunteer)
         response = self.client.post(f'/api/v1/participation/{self.program.id}/join/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['data']['status'], 'joined')
+        self.assertEqual(response.data['data']['status'], 'pending')
 
     @patch('services.participation_service.EmailService.send_volunteer_joined')
     @patch('services.participation_service.invalidate_volunteer_dashboard')
@@ -139,7 +139,20 @@ class ParticipationAPITest(APITestCase):
         self.client.force_authenticate(user=self.volunteer)
         response = self.client.post(f'/api/v1/participation/{self.program.id}/join/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['data']['status'], 'waitlisted')
+        self.assertEqual(response.data['data']['status'], 'pending')
+
+    @patch('services.participation_service.EmailService.send_volunteer_joined')
+    @patch('services.participation_service.invalidate_volunteer_dashboard')
+    @patch('services.participation_service.invalidate_ngo_dashboard')
+    def test_ngo_approve_join_request(self, m1, m2, mock_email):
+        self.client.force_authenticate(user=self.volunteer)
+        join_res = self.client.post(f'/api/v1/participation/{self.program.id}/join/')
+        part_id = join_res.data['data']['id']
+
+        self.client.force_authenticate(user=self.ngo_user)
+        response = self.client.post(f'/api/v1/participation/requests/{part_id}/review/', {'action': 'accept'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['data']['status'], 'joined')
 
     @patch('services.participation_service.EmailService.send_volunteer_joined')
     @patch('services.participation_service.EmailService.send_volunteer_left')
