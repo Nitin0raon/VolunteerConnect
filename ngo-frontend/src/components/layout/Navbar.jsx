@@ -2,41 +2,18 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HiMenuAlt3, HiX } from 'react-icons/hi'
-import { HiArrowUpRight } from 'react-icons/hi2'
 import { useAuth } from '../../context/AuthContext'
-
-/* Matches the tokens used on the redesigned HomePage — keep these in sync,
-   or better, lift them into a shared theme file once you're happy with it. */
-const ink = '#141310'
-const inkSoft = '#6B685F'
-const amber = '#E8A33D'
-
-// Same hero-only cream tones as HomePage's `heroText` / `heroTextSoft`. The
-// navbar sits directly on top of that dark hero photo before the page is
-// scrolled, so it borrows the same colors there instead of the page's
-// near-black ink, which would be unreadable on a dark background.
-const heroText = '#FBF6EA'
-const heroTextSoft = 'rgba(251, 246, 234, 0.86)'
 
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Programs', href: '/programs' },
-  { label: 'About', href: '/#about' },
-  { label: 'Contact', href: '/#contact' },
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user, logout, isNGO, isVolunteer } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   useEffect(() => { setMobileOpen(false) }, [location.pathname])
 
@@ -47,155 +24,135 @@ export default function Navbar() {
 
   const dashboardHref = isNGO ? '/ngo/dashboard' : '/volunteer/dashboard'
 
-  // Only the home page opens on the dark hero photo — everywhere else the
-  // page bed is the light pageBg, so the glass pill should stay in its
-  // original light/ink styling there regardless of scroll position.
-  const isHome = location.pathname === '/'
-  const overHero = isHome && !scrolled
-  const navText = overHero ? heroText : ink
-  const navTextSoft = overHero ? heroTextSoft : inkSoft
-
   return (
     <>
-      <motion.nav
-        initial={{ y: -40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 pt-4 md:pt-6"
-      >
-        <div
-          className={`max-w-6xl mx-auto flex items-center justify-between rounded-full pl-3 pr-1.5 py-1.5 md:pl-4 md:pr-2 md:py-2 backdrop-blur-md transition-all duration-300 ${
-            overHero
-              ? 'bg-white/10 border border-white/20 shadow-none'
-              : scrolled
-              ? 'bg-white/85 shadow-md'
-              : 'bg-white/70 shadow-sm'
-          }`}
-        >
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-black h-20 flex items-center px-6 md:px-12">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
+          
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <span
-              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold transition-colors"
-              style={{ background: ink }}
-            >
-              V
+            <span className="font-black text-xl tracking-widest text-black font-brand uppercase">
+              volunect
             </span>
-            <span className="font-bold tracking-tight transition-colors" style={{ color: navText }}>volunect</span>
           </Link>
 
-          {/* Desktop nav */}
+          {/* Center Call to Action */}
+          <div className="hidden md:block">
+            {user ? (
+              <Link
+                to={dashboardHref}
+                className="border border-black px-6 py-2 text-xs uppercase tracking-widest font-black bg-white hover:bg-black hover:text-white transition-colors duration-300"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <Link
+                to="/register"
+                className="border border-black px-6 py-2 text-xs uppercase tracking-widest font-black bg-white hover:bg-black hover:text-white transition-colors duration-300"
+              >
+                Join the movement
+              </Link>
+            )}
+          </div>
+
+          {/* Right Links & Actions */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((l) => (
               <Link
                 key={l.label}
                 to={l.href}
-                className="text-sm font-medium transition-colors"
-                style={{ color: location.pathname === l.href ? amber : navTextSoft }}
+                className={`text-xs font-bold uppercase tracking-widest transition-colors hover:text-black ${
+                  location.pathname === l.href ? 'text-black underline underline-offset-4' : 'text-gray-500'
+                }`}
               >
                 {l.label}
               </Link>
             ))}
-          </div>
-
-          {/* Actions */}
-          <div className="hidden md:flex items-center gap-3">
+            
             {user ? (
-              <>
-                <Link
-                  to={dashboardHref}
-                  className="text-sm font-medium px-4 py-2 transition-colors"
-                  style={{ color: navTextSoft }}
-                >
-                  Dashboard
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="text-sm font-semibold px-5 py-2.5 rounded-full border transition-all hover:bg-black/5"
-                  style={{ borderColor: navText, color: navText }}
-                >
-                  Logout
-                </button>
-              </>
+              <button
+                onClick={handleLogout}
+                className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-black transition-colors"
+              >
+                Logout
+              </button>
             ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="text-sm font-medium px-3 py-2 transition-colors"
-                  style={{ color: navTextSoft }}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="flex items-center gap-2 text-sm font-semibold text-white pl-4 pr-1.5 py-1.5 rounded-full transition-transform hover:-translate-y-0.5"
-                  style={{ background: ink }}
-                >
-                  Get Started
-                  <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                    <HiArrowUpRight size={13} />
-                  </span>
-                </Link>
-              </>
+              <Link
+                to="/login"
+                className={`text-xs font-bold uppercase tracking-widest transition-colors hover:text-black ${
+                  location.pathname === '/login' ? 'text-black underline underline-offset-4' : 'text-gray-500'
+                }`}
+              >
+                Login
+              </Link>
             )}
           </div>
 
           {/* Mobile toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-full transition-colors"
-            style={{ color: navText }}
+            className="md:hidden p-2 text-black hover:opacity-75"
           >
-            {mobileOpen ? <HiX size={20} /> : <HiMenuAlt3 size={20} />}
+            {mobileOpen ? <HiX size={24} /> : <HiMenuAlt3 size={24} />}
           </button>
         </div>
-      </motion.nav>
+      </nav>
+
+      {/* Spacer to push page content below the fixed header */}
+      <div className="h-20" />
 
       {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -12 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.25 }}
-            className="fixed top-20 inset-x-4 z-40 rounded-3xl p-6 backdrop-blur-md bg-white/90 shadow-lg md:hidden"
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-20 inset-x-0 z-40 bg-white border-b border-black p-8 md:hidden flex flex-col gap-6"
           >
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4">
               {navLinks.map((l) => (
                 <Link
                   key={l.label}
                   to={l.href}
-                  className="text-base font-medium"
-                  style={{ color: location.pathname === l.href ? amber : ink }}
+                  className="text-sm font-bold uppercase tracking-widest text-black"
                 >
                   {l.label}
                 </Link>
               ))}
-              <div className="pt-4 border-t flex flex-col gap-4" style={{ borderColor: '#E5E1D3' }}>
-                {user ? (
-                  <>
-                    <Link to={dashboardHref} className="text-base font-medium" style={{ color: ink }}>
-                      Dashboard
-                    </Link>
-                    <button onClick={handleLogout} className="text-left text-base font-medium" style={{ color: inkSoft }}>
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/login" className="text-base font-medium" style={{ color: inkSoft }}>
-                      Login
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="inline-block text-white font-semibold px-5 py-3 rounded-full text-center"
-                      style={{ background: ink }}
-                    >
-                      Get Started
-                    </Link>
-                  </>
-                )}
-              </div>
+              
+              {user ? (
+                <>
+                  <Link
+                    to={dashboardHref}
+                    className="text-sm font-bold uppercase tracking-widest text-black"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="text-left text-sm font-bold uppercase tracking-widest text-gray-500"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-sm font-bold uppercase tracking-widest text-black"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="border border-black px-6 py-3 text-sm text-center uppercase tracking-widest font-black bg-white hover:bg-black hover:text-white transition-colors duration-300"
+                  >
+                    Join the movement
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}

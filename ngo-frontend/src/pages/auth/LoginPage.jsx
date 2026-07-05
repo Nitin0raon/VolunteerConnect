@@ -5,10 +5,10 @@ import { useAuth } from '../../context/AuthContext'
 
 /* Same tokens as HomePage / Navbar — lift these into a shared theme file
    once the redesign is finalized. */
-const pageBg = '#EEECE4'
-const ink = '#141310'
-const inkSoft = '#6B685F'
-const amber = '#E8A33D'
+const pageBg = '#FFFFFF'
+const ink = '#000000'
+const inkSoft = '#666666'
+const amber = '#000000'
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' })
@@ -48,25 +48,13 @@ export default function LoginPage() {
   }
 
   const fieldClass =
-    'w-full rounded-2xl px-4 py-3.5 text-sm bg-white/70 focus:outline-none focus:ring-2 transition-shadow'
+    'w-full bg-white border border-black rounded-none px-4 py-3.5 text-sm focus:outline-none focus:bg-gray-50 text-black placeholder-gray-400 font-sans'
 
   return (
     <div
       className="font-brand min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
       style={{ background: pageBg, color: ink }}
     >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        .font-brand { font-family: 'Plus Jakarta Sans', sans-serif; }
-      `}</style>
-
-      {/* warm glow, same language as the homepage hero — muted sand tone
-          rather than the bright amber accent, so it stays a quiet backdrop */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl pointer-events-none opacity-40"
-        style={{ background: '#D9CDAE' }}
-      />
-
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <motion.div
@@ -76,33 +64,29 @@ export default function LoginPage() {
           className="text-center mb-10"
         >
           <Link to="/" className="inline-flex items-center gap-2 mb-8">
-            <span
-              className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold"
-              style={{ background: ink }}
-            >
-              V
+            <span className="font-black text-xl tracking-widest text-black font-brand uppercase">
+              volunect
             </span>
-            <span className="font-bold text-lg tracking-tight">volunect</span>
           </Link>
-          <h1 className="font-extrabold text-3xl tracking-tight mb-2">Welcome back</h1>
-          <p className="text-sm" style={{ color: inkSoft }}>Sign in to your account to continue</p>
+          <h1 className="font-brand font-black text-3xl uppercase tracking-tighter mb-2 text-black">Welcome back</h1>
+          <p className="text-xs uppercase tracking-wider font-bold text-gray-500">Sign in to your account to continue</p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="rounded-[2rem] p-8 backdrop-blur-md bg-white/60 shadow-xl"
+          className="p-8 border border-black bg-white rounded-none shadow-none"
         >
           {serverError && (
-            <div className="mb-6 px-4 py-3 rounded-2xl text-sm bg-red-50 border border-red-200 text-red-600">
+            <div className="mb-6 px-4 py-3 border border-red-600 text-xs uppercase tracking-wider font-bold bg-red-50 text-red-600">
               {serverError}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5 font-sans">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: inkSoft }}>
+              <label className="block text-xs font-black uppercase tracking-widest mb-2 font-brand text-black">
                 Email Address
               </label>
               <input
@@ -112,15 +96,14 @@ export default function LoginPage() {
                 onChange={handleChange('email')}
                 className={fieldClass}
                 style={{
-                  boxShadow: errors.email ? '0 0 0 2px #F5A3A3' : 'none',
-                  '--tw-ring-color': amber,
+                  borderColor: errors.email ? '#DC2626' : '#000000',
                 }}
               />
-              {errors.email && <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>}
+              {errors.email && <p className="text-xs text-red-600 mt-1.5 font-bold uppercase tracking-wider">{errors.email}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: inkSoft }}>
+              <label className="block text-xs font-black uppercase tracking-widest mb-2 font-brand text-black">
                 Password
               </label>
               <input
@@ -130,33 +113,31 @@ export default function LoginPage() {
                 onChange={handleChange('password')}
                 className={fieldClass}
                 style={{
-                  boxShadow: errors.password ? '0 0 0 2px #F5A3A3' : 'none',
-                  '--tw-ring-color': amber,
+                  borderColor: errors.password ? '#DC2626' : '#000000',
                 }}
               />
-              {errors.password && <p className="text-xs text-red-500 mt-1.5">{errors.password}</p>}
+              {errors.password && <p className="text-xs text-red-600 mt-1.5 font-bold uppercase tracking-wider">{errors.password}</p>}
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 font-semibold py-3.5 rounded-full text-white transition-transform hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0"
-              style={{ background: ink }}
+              className="w-full mt-2 font-black uppercase tracking-widest text-xs py-4 border border-black rounded-none bg-black text-white hover:bg-white hover:text-black transition-colors duration-300 disabled:opacity-50"
             >
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
 
-          <p className="text-center text-sm mt-6" style={{ color: inkSoft }}>
+          <p className="text-center text-xs uppercase tracking-wider font-bold mt-6 text-gray-500">
             Don't have an account?{' '}
-            <Link to="/register" className="font-semibold" style={{ color: amber }}>
+            <Link to="/register" className="text-black underline underline-offset-2">
               Create one
             </Link>
           </p>
         </motion.div>
 
-        <p className="text-center text-xs mt-6" style={{ color: inkSoft }}>
-          <Link to="/" className="hover:opacity-70 transition-opacity">← Back to home</Link>
+        <p className="text-center text-xs uppercase tracking-widest font-black mt-6">
+          <Link to="/" className="text-black hover:opacity-70 transition-opacity">← Back to home</Link>
         </p>
       </div>
     </div>

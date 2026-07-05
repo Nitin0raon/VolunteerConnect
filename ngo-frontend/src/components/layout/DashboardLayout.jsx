@@ -10,12 +10,13 @@ import { useAuth } from '../../context/AuthContext'
    doesn't read as one flat, overexposed plane. Page content then sits in
    its own white card on top of that canvas, so whatever renders as
    `children` has real definition instead of floating on raw background. */
-const canvasBg = '#E6E1D3'
-const cardBg = '#FBFAF6'
-const ink = '#141310'
-const inkSoft = '#6B685F'
-const amber = '#E8A33D'
-const line = '#DEDACB'
+
+const canvasBg = '#FFFFFF'
+const cardBg = '#FFFFFF'
+const ink = '#000000'
+const inkSoft = '#666666'
+const amber = '#000000'
+const line = '#000000'
 
 export default function DashboardLayout({ children, title }) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -42,7 +43,7 @@ export default function DashboardLayout({ children, title }) {
               initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }}
               transition={{ type: 'spring', damping: 30 }}
               className="absolute top-0 left-0 bottom-0 w-72 shadow-xl"
-              style={{ background: '#F7F5EE', borderRight: `1px solid ${line}` }}
+              style={{ background: '#FFFFFF', borderRight: `1px solid ${line}` }}
               onClick={(e) => e.stopPropagation()}
             >
               <DashboardSidebar mobile />
@@ -56,58 +57,55 @@ export default function DashboardLayout({ children, title }) {
         {/* Topbar */}
         <header
           className="sticky top-0 z-20 backdrop-blur-xl px-6 py-4 flex items-center justify-between"
-          style={{ background: `${canvasBg}D9`, borderBottom: `1px solid ${line}`, boxShadow: '0 1px 0 rgba(0,0,0,0.02)' }}
+          style={{ background: `rgba(255, 255, 255, 0.9)`, borderBottom: `1px solid ${line}` }}
         >
           <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileOpen(true)}
               className="lg:hidden transition-colors"
-              style={{ color: inkSoft }}
+              style={{ color: ink }}
             >
               <HiMenuAlt3 size={22} />
             </button>
-            {title && <h1 className="text-lg font-bold tracking-tight">{title}</h1>}
+            {title && <h1 className="text-sm font-black uppercase tracking-widest">{title}</h1>}
           </div>
 
           <div className="flex items-center gap-3">
             <Link
               to={isNGO ? '/ngo/activity' : '/volunteer/activity'}
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-all bg-white/60 hover:bg-white"
-              style={{ color: inkSoft }}
+              className="w-9 h-9 border border-black flex items-center justify-center transition-all bg-white hover:bg-black hover:text-white"
+              style={{ color: ink }}
             >
               <HiBell size={16} />
             </Link>
-            <div className="flex items-center gap-2 rounded-full pl-2 pr-3 py-1.5 bg-white/60">
+            <div className="flex items-center gap-2 border border-black pl-2 pr-3 py-1.5 bg-white">
               <div
-                className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{ background: amber, color: ink }}
+                className="w-6 h-6 flex items-center justify-center text-xs font-black bg-black text-white"
               >
                 {user?.first_name?.[0]}
               </div>
-              <span className="text-xs hidden sm:block" style={{ color: inkSoft }}>{user?.first_name}</span>
+              <span className="text-xs hidden sm:block uppercase font-bold tracking-wider" style={{ color: ink }}>{user?.first_name}</span>
             </div>
             <button
               onClick={handleLogout}
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-all bg-white/60 hover:bg-red-50 hover:text-red-500"
-              style={{ color: inkSoft }}
+              className="w-9 h-9 border border-black flex items-center justify-center transition-all bg-white hover:bg-black hover:text-white"
+              style={{ color: ink }}
             >
               <HiLogout size={16} />
             </button>
           </div>
         </header>
 
-        {/* Content — sits in its own card on the deeper canvas, rather than
-            floating directly on it, so nested dashboard pages read as
-            content rather than more background. */}
+        {/* Content */}
         <motion.main
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
           className="flex-1 p-4 md:p-8"
         >
           <div
-            className="min-h-full rounded-[1.75rem] p-6 md:p-10 shadow-sm"
-            style={{ background: cardBg, border: `1px solid ${line}` }}
+            className="min-h-full p-6 md:p-10 border border-black rounded-none"
+            style={{ background: cardBg }}
           >
             {children}
           </div>

@@ -48,38 +48,38 @@ export default function NGOProfilePage() {
 
   return (
     <DashboardLayout title="NGO Profile">
-      <div className="max-w-2xl">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-          <p className="text-xs uppercase tracking-widest2 text-primary mb-3">Setup</p>
-          <h1 className="text-4xl font-light text-white">NGO Profile</h1>
-          <p className="text-text-secondary mt-2 text-sm">Complete your profile to get approved and start creating programs.</p>
+      <div className="max-w-2xl text-black">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
+          <p className="text-xs uppercase tracking-widest font-black text-gray-500 mb-3">Setup</p>
+          <h1 className="text-4xl font-brand font-black uppercase tracking-tighter text-black font-brand">NGO Profile</h1>
+          <p className="text-xs font-bold uppercase tracking-wider text-gray-500 font-sans mt-2">Complete your profile to get approved and start creating programs.</p>
         </motion.div>
 
         {profile && (
-          <div className={`mb-6 px-5 py-3.5 rounded-2xl border text-sm ${
-            profile.status === 'approved' ? 'bg-primary/10 border-primary/30 text-primary' :
-            profile.status === 'pending' ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' :
-            'bg-red-500/10 border-red-500/30 text-red-400'
+          <div className={`mb-6 px-5 py-3.5 border text-xs font-black uppercase tracking-widest bg-white ${
+            profile.status === 'approved' ? 'border-black text-black' :
+            profile.status === 'pending' ? 'border-yellow-500 text-yellow-600' :
+            'border-red-600 text-red-600'
           }`}>
-            Status: <span className="font-medium capitalize">{profile.status}</span>
+            Status: <span className="font-brand uppercase">{profile.status}</span>
             {profile.status === 'rejected' && profile.rejection_reason && (
-              <span className="block mt-1 opacity-80">Reason: {profile.rejection_reason}</span>
+              <span className="block mt-1 opacity-85">Reason: {profile.rejection_reason}</span>
             )}
           </div>
         )}
 
         {success && (
-          <div className="mb-6 px-5 py-3.5 rounded-2xl border bg-primary/10 border-primary/30 text-primary text-sm">
+          <div className="mb-6 px-5 py-3.5 border border-black bg-white text-black text-xs font-black uppercase tracking-widest">
             ✓ Profile saved successfully!
           </div>
         )}
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="bg-card border border-subtle rounded-3xl p-8">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
+          className="bg-white border border-black rounded-none p-8 shadow-none">
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input label="Organization Name" placeholder="Hope Foundation" value={form.organization_name} onChange={set('organization_name')} error={errors.organization_name} />
             <Textarea label="Description" placeholder="What does your organization do? Who do you help?" value={form.description} onChange={set('description')} error={errors.description} rows={4} />
-            <div className="grid sm:grid-cols-2 gap-5">
+            <div className="grid sm:grid-cols-2 gap-5 font-sans">
               <Input label="Website (optional)" placeholder="https://yourorg.org" value={form.website} onChange={set('website')} />
               <Input label="Phone (optional)" placeholder="+91 99999 99999" value={form.phone} onChange={set('phone')} />
             </div>

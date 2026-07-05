@@ -27,63 +27,59 @@ export default function ProgramCard({ program, onJoin, onLeave, myParticipation,
       variants={cardHover}
       initial="rest"
       whileHover="hover"
-      className="bg-card border border-subtle rounded-3xl overflow-hidden group"
+      className="bg-white border border-black rounded-none overflow-hidden group"
     >
       {/* Image */}
-      <div className="relative h-52 overflow-hidden">
+      <div className="relative h-52 overflow-hidden border-b border-black">
         <img
           src={getProgramImage(program.id)}
           alt={program.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-full object-cover img-grayscale transition-transform duration-700 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
         <div className="absolute top-4 left-4">
           <Badge status={program.status} />
         </div>
-        <div className="absolute top-4 right-4 bg-bg/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs text-text-secondary">
+        <div className="absolute top-4 right-4 bg-black px-3 py-1 rounded-none text-[10px] uppercase tracking-wider font-black text-white">
           {program.ngo_name}
         </div>
       </div>
 
       {/* Content */}
       <div className="p-6">
-        <h3 className="text-lg font-medium text-white mb-2 leading-snug">{program.title}</h3>
-        <p className="text-sm text-text-secondary mb-5 leading-relaxed">
+        <h3 className="text-lg font-black uppercase tracking-tight text-black mb-2 leading-snug font-brand">{program.title}</h3>
+        <p className="text-xs text-gray-500 mb-5 leading-relaxed">
           {truncate(program.description, 100)}
         </p>
 
         {/* Meta */}
-        <div className="flex flex-wrap gap-3 mb-5">
-          <span className="flex items-center gap-1.5 text-xs text-text-secondary">
-            <HiUsers className="text-primary" />
-            {program.current_participants}/{program.capacity}
+        <div className="flex flex-wrap gap-4 mb-5 border-t border-b border-black py-3">
+          <span className="flex items-center gap-1.5 text-xs font-bold text-black uppercase tracking-wider">
+            👥 {program.current_participants}/{program.capacity}
           </span>
           {program.location && (
-            <span className="flex items-center gap-1.5 text-xs text-text-secondary">
-              <HiLocationMarker className="text-primary" />
-              {program.location}
+            <span className="flex items-center gap-1.5 text-xs font-bold text-black uppercase tracking-wider">
+              📍 {program.location}
             </span>
           )}
           {program.start_date && (
-            <span className="flex items-center gap-1.5 text-xs text-text-secondary">
-              <HiCalendar className="text-primary" />
-              {formatDate(program.start_date)}
+            <span className="flex items-center gap-1.5 text-xs font-bold text-black uppercase tracking-wider">
+              📅 {formatDate(program.start_date)}
             </span>
           )}
         </div>
 
         {/* Capacity bar */}
         <div className="mb-5">
-          <div className="flex justify-between text-xs text-text-secondary mb-1.5">
+          <div className="flex justify-between text-[10px] uppercase tracking-wider font-black text-black mb-1.5">
             <span>Capacity</span>
             <span>{pct}%</span>
           </div>
-          <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+          <div className="h-2 bg-gray-100 border border-black rounded-none overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
               transition={{ duration: 1, ease: 'easeOut' }}
-              className={`h-full rounded-full ${pct >= 90 ? 'bg-red-400' : 'bg-primary'}`}
+              className={`h-full rounded-none bg-black`}
             />
           </div>
         </div>
@@ -92,15 +88,15 @@ export default function ProgramCard({ program, onJoin, onLeave, myParticipation,
         <div className="flex gap-2">
           <Link
             to={`/programs/${program.id}`}
-            className="flex-1 text-center text-sm border border-subtle rounded-full py-2.5 text-text-secondary hover:text-white hover:border-white/20 transition-all"
+            className="flex-1 text-center text-xs font-black uppercase tracking-widest border border-black rounded-none py-3 text-black hover:bg-black hover:text-white transition-all"
           >
-            View Details
+            Details
           </Link>
           {myParticipation ? (
             <button
               onClick={() => onLeave(program.id)}
               disabled={loading}
-              className="flex-1 text-sm bg-red-500/10 border border-red-500/30 text-red-400 rounded-full py-2.5 hover:bg-red-500/20 transition-all disabled:opacity-50"
+              className="flex-1 text-xs font-black uppercase tracking-widest bg-red-600 border border-red-600 text-white rounded-none py-3 hover:bg-white hover:text-red-600 transition-all disabled:opacity-50"
             >
               Leave
             </button>
@@ -108,9 +104,9 @@ export default function ProgramCard({ program, onJoin, onLeave, myParticipation,
             <button
               onClick={() => onJoin(program.id)}
               disabled={loading}
-              className="flex-1 text-sm bg-primary text-bg rounded-full py-2.5 hover:bg-primary-hover transition-all disabled:opacity-50"
+              className="flex-1 text-xs font-black uppercase tracking-widest bg-black border border-black text-white rounded-none py-3 hover:bg-white hover:text-black transition-all disabled:opacity-50"
             >
-              {isFull ? 'Join Waitlist' : 'Join'}
+              {isFull ? 'Waitlist' : 'Join'}
             </button>
           ) : null}
         </div>

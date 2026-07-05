@@ -3,30 +3,28 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
 
-/* Same tokens as HomePage / Navbar / LoginPage */
-const pageBg = '#EEECE4'
-const ink = '#141310'
-const inkSoft = '#6B685F'
-const amber = '#E8A33D'
+const pageBg = '#FFFFFF'
+const ink = '#000000'
+const inkSoft = '#666666'
+const amber = '#000000'
 
 const fieldClass =
-  'w-full rounded-2xl px-4 py-3.5 text-sm bg-white/70 focus:outline-none focus:ring-2 transition-shadow'
+  'w-full bg-white border border-black rounded-none px-4 py-3.5 text-sm focus:outline-none focus:bg-gray-50 text-black placeholder-gray-400 font-sans'
 
 function Field({ label, error, ...props }) {
   return (
     <div>
-      <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: inkSoft }}>
+      <label className="block text-xs font-black uppercase tracking-widest mb-2 font-brand text-black">
         {label}
       </label>
       <input
         {...props}
         className={fieldClass}
         style={{
-          boxShadow: error ? '0 0 0 2px #F5A3A3' : 'none',
-          '--tw-ring-color': amber,
+          borderColor: error ? '#DC2626' : '#000000',
         }}
       />
-      {error && <p className="text-xs text-red-500 mt-1.5">{error}</p>}
+      {error && <p className="text-xs text-red-600 mt-1.5 font-bold uppercase tracking-wider">{error}</p>}
     </div>
   )
 }
@@ -86,18 +84,6 @@ export default function RegisterPage() {
       className="font-brand min-h-screen flex items-center justify-center px-4 py-24 relative overflow-hidden"
       style={{ background: pageBg, color: ink }}
     >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        .font-brand { font-family: 'Plus Jakarta Sans', sans-serif; }
-      `}</style>
-
-      {/* muted sand tone rather than the bright amber accent, so the glow
-          stays a quiet backdrop instead of drawing the eye */}
-      <div
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-3xl pointer-events-none opacity-30"
-        style={{ background: '#D9CDAE' }}
-      />
-
       <div className="w-full max-w-lg relative z-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -106,32 +92,28 @@ export default function RegisterPage() {
           className="text-center mb-10"
         >
           <Link to="/" className="inline-flex items-center gap-2 mb-8">
-            <span
-              className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold"
-              style={{ background: ink }}
-            >
-              V
+            <span className="font-black text-xl tracking-widest text-black font-brand uppercase">
+              volunect
             </span>
-            <span className="font-bold text-lg tracking-tight">volunect</span>
           </Link>
-          <h1 className="font-extrabold text-3xl tracking-tight mb-2">Create your account</h1>
-          <p className="text-sm" style={{ color: inkSoft }}>Join thousands making a difference</p>
+          <h1 className="font-brand font-black text-3xl uppercase tracking-tighter mb-2 text-black">Create your account</h1>
+          <p className="text-xs uppercase tracking-wider font-bold text-gray-500">Join thousands making a difference</p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="rounded-[2rem] p-8 backdrop-blur-md bg-white/60 shadow-xl"
+          className="p-8 border border-black bg-white rounded-none shadow-none"
         >
           {/* Role toggle */}
-          <div className="flex gap-2 p-1 rounded-2xl mb-7" style={{ background: pageBg }}>
+          <div className="flex border border-black rounded-none p-1 mb-7 bg-white">
             {[{ value: 'volunteer', label: '🙋 Volunteer' }, { value: 'ngo', label: '🏢 NGO' }].map(({ value, label }) => (
               <button
                 key={value}
                 type="button"
                 onClick={() => setForm((p) => ({ ...p, role: value }))}
-                className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                className="flex-1 py-2.5 rounded-none text-xs font-black uppercase tracking-widest transition-all"
                 style={
                   form.role === value
                     ? { background: ink, color: '#fff' }
@@ -144,12 +126,12 @@ export default function RegisterPage() {
           </div>
 
           {serverError && (
-            <div className="mb-6 px-4 py-3 rounded-2xl text-sm bg-red-50 border border-red-200 text-red-600">
+            <div className="mb-6 px-4 py-3 border border-red-600 text-xs uppercase tracking-wider font-bold bg-red-50 text-red-600">
               {serverError}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 font-sans">
             <div className="grid grid-cols-2 gap-4">
               <Field label="First Name" placeholder="Jane" value={form.first_name} onChange={set('first_name')} error={errors.first_name} />
               <Field label="Last Name" placeholder="Doe" value={form.last_name} onChange={set('last_name')} error={errors.last_name} />
@@ -161,23 +143,22 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 font-semibold py-3.5 rounded-full text-white transition-transform hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0"
-              style={{ background: ink }}
+              className="w-full mt-2 font-black uppercase tracking-widest text-xs py-4 border border-black rounded-none bg-black text-white hover:bg-white hover:text-black transition-colors duration-300 disabled:opacity-50"
             >
               {loading ? 'Creating account…' : 'Create Account'}
             </button>
           </form>
 
-          <p className="text-center text-sm mt-6" style={{ color: inkSoft }}>
+          <p className="text-center text-xs uppercase tracking-wider font-bold mt-6 text-gray-500">
             Already have an account?{' '}
-            <Link to="/login" className="font-semibold" style={{ color: amber }}>
+            <Link to="/login" className="text-black underline underline-offset-2">
               Sign in
             </Link>
           </p>
         </motion.div>
 
-        <p className="text-center text-xs mt-6" style={{ color: inkSoft }}>
-          <Link to="/" className="hover:opacity-70 transition-opacity">← Back to home</Link>
+        <p className="text-center text-xs uppercase tracking-widest font-black mt-6">
+          <Link to="/" className="text-black hover:opacity-70 transition-opacity">← Back to home</Link>
         </p>
       </div>
     </div>

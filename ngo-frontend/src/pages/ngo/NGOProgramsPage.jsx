@@ -68,17 +68,17 @@ export default function NGOProgramsPage() {
     <DashboardLayout title="My Programs">
       <AnimatePresence>
         {toast && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl border text-sm font-medium ${toast.type === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-primary/10 border-primary/30 text-primary'}`}>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-none border text-xs font-black uppercase tracking-widest bg-white ${toast.type === 'error' ? 'border-red-600 text-red-600' : 'border-black text-black'}`}>
             {toast.type === 'error' ? '✕' : '✓'} {toast.msg}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-center justify-between mb-10 text-black">
         <div>
-          <p className="text-xs uppercase tracking-widest2 text-primary mb-2">Management</p>
-          <h1 className="text-4xl font-light text-white">My Programs</h1>
+          <p className="text-xs uppercase tracking-widest font-black text-gray-500 mb-2">Management</p>
+          <h1 className="text-4xl font-brand font-black uppercase tracking-tighter text-black">My Programs</h1>
         </div>
         <Link to="/ngo/create-program">
           <Button><HiPlus className="mr-1" /> New Program</Button>
@@ -95,39 +95,39 @@ export default function NGOProgramsPage() {
           action={<Link to="/ngo/create-program"><Button>Create Program</Button></Link>}
         />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 font-sans">
           {programs.map((p, i) => (
             <motion.div
               key={p.id}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-card border border-subtle rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4"
+              className="bg-white border border-black rounded-none p-5 flex flex-col sm:flex-row sm:items-center gap-4 shadow-none"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-start gap-3 mb-2">
-                  <h3 className="text-sm font-medium text-white">{p.title}</h3>
+                  <h3 className="text-xs font-black uppercase tracking-wider text-black">{p.title}</h3>
                   <Badge status={p.status} />
                 </div>
-                <div className="flex flex-wrap gap-4 text-xs text-text-secondary">
+                <div className="flex flex-wrap gap-4 text-[10px] uppercase font-bold text-gray-500">
                   <span>{p.current_participants}/{p.capacity} participants</span>
                   {p.location && <span>📍 {p.location}</span>}
                   {p.start_date && <span>📅 {formatDate(p.start_date)}</span>}
-                  <span className="text-text-secondary/50">Created {formatDate(p.created_at)}</span>
+                  <span className="text-gray-400">Created {formatDate(p.created_at)}</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Link to={`/programs/${p.id}`}
-                  className="w-9 h-9 border border-subtle rounded-xl flex items-center justify-center text-text-secondary hover:text-white hover:border-white/20 transition-all">
+                  className="w-9 h-9 border border-black rounded-none flex items-center justify-center text-black hover:bg-black hover:text-white transition-all">
                   <HiEye size={16} />
                 </Link>
                 <button onClick={() => openEdit(p)}
-                  className="w-9 h-9 border border-subtle rounded-xl flex items-center justify-center text-text-secondary hover:text-primary hover:border-primary/30 transition-all">
+                  className="w-9 h-9 border border-black rounded-none flex items-center justify-center text-black hover:bg-black hover:text-white transition-all">
                   <HiPencil size={16} />
                 </button>
                 <button onClick={() => setDeleteModal(p)}
-                  className="w-9 h-9 border border-subtle rounded-xl flex items-center justify-center text-text-secondary hover:text-red-400 hover:border-red-400/30 transition-all">
+                  className="w-9 h-9 border border-black rounded-none flex items-center justify-center text-black hover:bg-red-600 hover:border-red-600 hover:text-white transition-all">
                   <HiTrash size={16} />
                 </button>
               </div>
@@ -148,9 +148,9 @@ export default function NGOProgramsPage() {
                 <Input label="Location" value={editForm.location} onChange={e => setEditForm(p => ({ ...p, location: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-xs text-text-secondary uppercase tracking-wider mb-1.5">Status</label>
+                <label className="block text-xs text-black font-black uppercase tracking-widest mb-1.5 font-brand">Status</label>
                 <select value={editForm.status} onChange={e => setEditForm(p => ({ ...p, status: e.target.value }))}
-                  className="w-full bg-bg border border-subtle rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/40">
+                  className="w-full bg-white border border-black rounded-none px-4 py-3 text-black text-sm focus:outline-none focus:bg-gray-50">
                   <option value="active">Active</option>
                   <option value="completed">Completed</option>
                   <option value="cancelled">Cancelled</option>
@@ -169,8 +169,8 @@ export default function NGOProgramsPage() {
       <AnimatePresence>
         {deleteModal && (
           <Modal open={!!deleteModal} onClose={() => setDeleteModal(null)} title="Delete Program">
-            <p className="text-text-secondary text-sm mb-6">
-              Are you sure you want to delete <span className="text-white font-medium">"{deleteModal.title}"</span>? This cannot be undone.
+            <p className="text-black text-xs font-bold uppercase tracking-wider mb-6">
+              Are you sure you want to delete <span className="font-black text-black">"{deleteModal.title}"</span>? This cannot be undone.
             </p>
             <div className="flex gap-3">
               <Button variant="danger" onClick={handleDelete} loading={deleteLoading} className="flex-1">Delete</Button>

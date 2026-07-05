@@ -7,44 +7,36 @@ import { certificateService } from '../../services/dashboardService'
 import { formatDate } from '../../utils'
 
 /* Same tokens as HomePage / Navbar / Login / Register / VolunteerDashboard */
-const ink = '#141310'
-const inkSoft = '#6B685F'
-const amber = '#E8A33D'
-const moss = '#5C7A5E'
-const rust = '#B4551F'
+const ink = '#000000'
+const inkSoft = '#666666'
+const amber = '#000000'
+const moss = '#000000'
+const rust = '#DC2626'
 
-const cardClass = 'rounded-2xl bg-white/70 backdrop-blur-md border shadow-sm'
-const cardBorder = { borderColor: 'rgba(20,19,16,0.08)' }
-
-const fontImport = (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    .font-brand { font-family: 'Plus Jakarta Sans', sans-serif; }
-  `}</style>
-)
+const cardClass = 'bg-white border border-black rounded-none shadow-none'
+const cardBorder = {}
 
 function Spinner() {
   return (
     <div
-      className="w-8 h-8 rounded-full border-2 animate-spin"
-      style={{ borderColor: 'rgba(20,19,16,0.12)', borderTopColor: amber }}
+      className="w-8 h-8 border border-black border-t-transparent animate-spin rounded-none"
     />
   )
 }
 
 function StatusBadge({ status }) {
   const map = {
-    approved: { bg: 'rgba(92,122,94,0.14)', color: moss },
-    completed: { bg: 'rgba(92,122,94,0.14)', color: moss },
-    pending: { bg: 'rgba(232,163,61,0.16)', color: '#B5791F' },
-    rejected: { bg: 'rgba(180,85,31,0.13)', color: rust },
-    cancelled: { bg: 'rgba(180,85,31,0.13)', color: rust },
+    approved: { bg: '#000000', color: '#ffffff', border: '#000000' },
+    completed: { bg: '#000000', color: '#ffffff', border: '#000000' },
+    pending: { bg: '#f3f4f6', color: '#000000', border: '#000000' },
+    rejected: { bg: '#fef2f2', color: '#dc2626', border: '#dc2626' },
+    cancelled: { bg: '#fef2f2', color: '#dc2626', border: '#dc2626' },
   }
-  const s = map[status] || { bg: 'rgba(20,19,16,0.07)', color: inkSoft }
+  const s = map[status] || { bg: '#ffffff', color: '#000000', border: '#000000' }
   return (
     <span
-      className="text-[11px] font-semibold px-2.5 py-1 rounded-full capitalize flex-shrink-0"
-      style={{ background: s.bg, color: s.color }}
+      className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 border capitalize flex-shrink-0"
+      style={{ background: s.bg, color: s.color, borderColor: s.border }}
     >
       {status}
     </span>
@@ -53,10 +45,10 @@ function StatusBadge({ status }) {
 
 function EmptyState({ icon, title, description, action }) {
   return (
-    <div className={`${cardClass} p-12 text-center`} style={cardBorder}>
+    <div className={`${cardClass} p-12 text-center`}>
       <div className="text-3xl mb-4">{icon}</div>
-      <p className="text-base font-bold mb-1.5" style={{ color: ink }}>{title}</p>
-      <p className="text-sm mb-5" style={{ color: inkSoft }}>{description}</p>
+      <p className="text-sm font-black uppercase tracking-widest mb-1.5" style={{ color: ink }}>{title}</p>
+      <p className="text-xs mb-5" style={{ color: inkSoft }}>{description}</p>
       {action}
     </div>
   )
@@ -74,12 +66,11 @@ export function MyParticipationsPage() {
 
   return (
     <DashboardLayout title="My Programs">
-      <div className="font-brand" style={{ color: ink }}>
-        {fontImport}
+      <div className="font-brand text-black">
 
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-          <p className="text-xs uppercase tracking-widest font-bold mb-3" style={{ color: amber }}>History</p>
-          <h1 className="text-4xl font-extrabold tracking-tight" style={{ color: ink }}>My Programs</h1>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
+          <p className="text-xs uppercase tracking-widest font-black text-gray-500 mb-3">History</p>
+          <h1 className="text-4xl font-brand font-black uppercase tracking-tighter text-black">My Programs</h1>
         </motion.div>
 
         {loading ? (
@@ -89,29 +80,28 @@ export function MyParticipationsPage() {
             icon="🔍"
             title="No programs yet"
             description="Join a volunteer program to see it here."
-            action={<Link to="/programs" className="text-sm font-semibold" style={{ color: amber }}>Browse Programs →</Link>}
+            action={<Link to="/programs" className="text-xs font-black uppercase tracking-widest text-black underline underline-offset-4">Browse Programs</Link>}
           />
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 font-sans">
             {items.map((item, i) => (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
                 className={`${cardClass} p-5 flex flex-col sm:flex-row sm:items-center gap-4`}
-                style={cardBorder}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start gap-3 mb-1">
-                    <p className="text-sm font-semibold" style={{ color: ink }}>{item.program_title}</p>
+                    <p className="text-xs font-black uppercase tracking-wider text-black">{item.program_title}</p>
                     <StatusBadge status={item.status} />
                   </div>
-                  <div className="flex flex-wrap gap-4 text-xs" style={{ color: inkSoft }}>
+                  <div className="flex flex-wrap gap-4 text-[10px] uppercase font-bold text-gray-500">
                     <span>Joined {formatDate(item.joined_at)}</span>
                     {item.left_at && <span>Left {formatDate(item.left_at)}</span>}
                     {item.waitlist_position && (
-                      <span className="font-semibold" style={{ color: '#B5791F' }}>
+                      <span className="font-black text-black">
                         Waitlist #{item.waitlist_position}
                       </span>
                     )}
@@ -119,10 +109,9 @@ export function MyParticipationsPage() {
                 </div>
                 <Link
                   to={`/programs/${item.program}`}
-                  className="text-xs font-semibold transition-colors flex-shrink-0"
-                  style={{ color: amber }}
+                  className="text-xs font-black uppercase tracking-widest text-black underline underline-offset-2 flex-shrink-0"
                 >
-                  View program →
+                  View program
                 </Link>
               </motion.div>
             ))}
@@ -159,12 +148,11 @@ export function MyCertificatesPage() {
 
   return (
     <DashboardLayout title="Certificates">
-      <div className="font-brand" style={{ color: ink }}>
-        {fontImport}
+      <div className="font-brand text-black">
 
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-          <p className="text-xs uppercase tracking-widest font-bold mb-3" style={{ color: amber }}>Achievements</p>
-          <h1 className="text-4xl font-extrabold tracking-tight" style={{ color: ink }}>My Certificates</h1>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
+          <p className="text-xs uppercase tracking-widest font-black text-gray-500 mb-3">Achievements</p>
+          <h1 className="text-4xl font-brand font-black uppercase tracking-tighter text-black">My Certificates</h1>
         </motion.div>
 
         {loading ? (
@@ -174,47 +162,40 @@ export function MyCertificatesPage() {
             icon="🏆"
             title="No certificates yet"
             description="Complete programs to earn certificates."
-            action={<Link to="/programs" className="text-sm font-semibold" style={{ color: amber }}>Browse Programs →</Link>}
+            action={<Link to="/programs" className="text-xs font-black uppercase tracking-widest text-black underline underline-offset-4">Browse Programs</Link>}
           />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {certs.map((cert, i) => (
               <motion.div
                 key={cert.id}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.07 }}
-                whileHover={{ y: -4 }}
-                className={`${cardClass} rounded-3xl p-6 flex flex-col`}
-                style={cardBorder}
+                whileHover={{ y: -2 }}
+                className={`${cardClass} p-6 flex flex-col`}
               >
                 {/* Certificate visual */}
                 <div
-                  className="rounded-2xl border p-6 mb-5 text-center"
-                  style={{ background: 'rgba(232,163,61,0.06)', borderColor: 'rgba(232,163,61,0.20)' }}
+                  className="border border-black p-6 mb-5 text-center bg-gray-50 rounded-none"
                 >
                   <div className="text-3xl mb-3">🏆</div>
-                  <p className="text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: amber }}>
+                  <p className="text-[10px] uppercase tracking-widest mb-1.5 font-black text-black font-brand">
                     Certificate of Participation
                   </p>
-                  <p className="text-lg font-bold mb-1" style={{ color: ink }}>{cert.program_title}</p>
-                  <p className="text-xs" style={{ color: inkSoft }}>{cert.ngo_name}</p>
+                  <p className="text-md font-brand font-black uppercase tracking-tight text-black mb-1">{cert.program_title}</p>
+                  <p className="text-[10px] uppercase font-bold text-gray-500">{cert.ngo_name}</p>
                 </div>
 
-                <div className="flex-1">
-                  <p className="text-xs mb-1" style={{ color: inkSoft }}>Certificate No.</p>
-                  <p className="text-sm font-mono font-semibold mb-3" style={{ color: amber }}>{cert.certificate_number}</p>
-                  <p className="text-xs" style={{ color: inkSoft }}>Issued {formatDate(cert.issued_at)}</p>
+                <div className="flex-1 font-sans">
+                  <p className="text-[10px] uppercase font-bold text-gray-500 mb-1">Certificate No.</p>
+                  <p className="text-xs font-mono font-black mb-3 text-black">{cert.certificate_number}</p>
+                  <p className="text-[10px] uppercase font-bold text-gray-400">Issued {formatDate(cert.issued_at)}</p>
                 </div>
 
                 <button
                   onClick={() => handleDownload(cert)}
-                  className="mt-5 w-full text-center text-sm rounded-full py-2.5 border font-semibold transition-all"
-                  style={{
-                    borderColor: 'rgba(232,163,61,0.35)',
-                    background: 'rgba(232,163,61,0.08)',
-                    color: '#B5791F',
-                  }}
+                  className="mt-5 w-full text-center text-xs font-black uppercase tracking-widest py-3 border border-black rounded-none bg-white text-black hover:bg-black hover:text-white transition-all"
                 >
                   Download PDF
                 </button>

@@ -12,11 +12,11 @@ import { staggerContainer, fadeUp } from '../utils/motion'
 /* Same tokens as HomePage / Navbar / Login / Register.
    Amber is used sparingly here — a small dot, a focus ring, a link — not
    as a fill color, per the "keep it calm" note. */
-const pageBg = '#EEECE4'
-const ink = '#141310'
-const inkSoft = '#6B685F'
-const amber = '#E8A33D'
-const line = '#DEDACB'
+const pageBg = '#FFFFFF'
+const ink = '#000000'
+const inkSoft = '#666666'
+const amber = '#000000'
+const line = '#000000'
 
 const STATUS_OPTIONS = ['', 'active', 'completed', 'cancelled']
 
@@ -107,22 +107,21 @@ export default function ProgramsPage() {
     <PublicLayout>
       <div style={{ background: pageBg, color: ink }} className="min-h-screen">
         {/* Hero */}
-        <div className="relative pt-32 pb-16 border-b overflow-hidden" style={{ borderColor: line }}>
+        <div className="relative pt-32 pb-16 border-b border-black overflow-hidden bg-white">
           <div className="absolute inset-0">
             <img
               src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600&q=80"
               alt="Programs"
-              className="w-full h-full object-cover opacity-[0.12]"
+              className="w-full h-full object-cover opacity-[0.06] img-grayscale"
             />
-            <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${pageBg}CC, ${pageBg})` }} />
           </div>
           <div className="relative max-w-6xl mx-auto px-6">
-            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-              <p className="text-xs uppercase tracking-[0.25em] font-bold mb-4" style={{ color: inkSoft }}>
-                Browse Programs
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+              <p className="text-xs uppercase tracking-widest font-black mb-4 text-gray-500 font-brand">
+                Browse Actions
               </p>
-              <h1 className="font-extrabold text-5xl md:text-6xl tracking-tight mb-4">Find your cause</h1>
-              <p className="text-lg max-w-xl" style={{ color: inkSoft }}>
+              <h1 className="font-brand font-black text-5xl md:text-6xl uppercase tracking-tighter mb-4 text-black">Find your cause</h1>
+              <p className="text-sm font-sans text-gray-600 max-w-xl">
                 {count > 0 ? `${count} programs available across India` : 'Discover meaningful volunteer opportunities'}
               </p>
             </motion.div>
@@ -133,20 +132,18 @@ export default function ProgramsPage() {
           {/* Search + filter bar */}
           <div className="flex flex-col sm:flex-row gap-4 mb-10">
             <div className="relative flex-1">
-              <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: inkSoft }} size={18} />
+              <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={18} />
               <input
                 type="text"
                 placeholder="Search programs, NGOs, locations…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-full pl-12 pr-4 py-3.5 text-sm bg-white/70 focus:outline-none focus:ring-2 transition-shadow"
-                style={{ '--tw-ring-color': amber }}
+                className="w-full border border-black rounded-none pl-12 pr-4 py-3.5 text-sm bg-white focus:outline-none text-black font-sans placeholder-gray-400"
               />
               {search && (
                 <button
                   onClick={() => setSearch('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-70"
-                  style={{ color: inkSoft }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-black hover:opacity-70"
                 >
                   <HiX size={16} />
                 </button>
@@ -154,15 +151,15 @@ export default function ProgramsPage() {
             </div>
             <button
               onClick={() => setFilterOpen(!filterOpen)}
-              className="flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-medium transition-all"
+              className="flex items-center gap-2 border border-black rounded-none px-6 py-3.5 text-xs font-black uppercase tracking-widest transition-all"
               style={
                 filterOpen
                   ? { background: ink, color: '#fff' }
-                  : { background: 'rgba(255,255,255,0.6)', color: inkSoft }
+                  : { background: '#fff', color: ink }
               }
             >
               <HiFilter size={16} />
-              Filters {status && <span className="w-1.5 h-1.5 rounded-full" style={{ background: amber }} />}
+              Filters {status && <span className="w-2 h-2 bg-black border border-white" />}
             </button>
           </div>
 
@@ -173,11 +170,11 @@ export default function ProgramsPage() {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden mb-10"
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden mb-10 border border-black"
               >
-                <div className="rounded-2xl p-6 bg-white/60 backdrop-blur-md">
-                  <p className="text-xs uppercase tracking-widest font-semibold mb-4" style={{ color: inkSoft }}>
+                <div className="p-6 bg-white">
+                  <p className="text-xs uppercase tracking-widest font-black mb-4 text-black font-brand">
                     Status
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -185,11 +182,11 @@ export default function ProgramsPage() {
                       <button
                         key={s}
                         onClick={() => setStatus(s)}
-                        className="px-4 py-2 rounded-full text-sm font-medium transition-all"
+                        className="px-4 py-2 rounded-none text-xs font-black uppercase tracking-widest transition-all"
                         style={
                           status === s
                             ? { background: ink, color: '#fff' }
-                            : { background: 'transparent', border: `1px solid ${line}`, color: inkSoft }
+                            : { background: 'transparent', border: `1px solid ${line}`, color: ink }
                         }
                       >
                         {s === '' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}

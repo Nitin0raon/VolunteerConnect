@@ -8,15 +8,15 @@ import { useAuth } from '../context/AuthContext'
 import { formatDate } from '../utils'
 
 /* Same tokens as HomePage / Navbar / Login / Register / dashboard pages */
-const pageBg = '#EEECE4'
-const ink = '#141310'
-const inkSoft = '#6B685F'
-const amber = '#E8A33D'
-const moss = '#5C7A5E'
-const rust = '#B4551F'
+const pageBg = '#FFFFFF'
+const ink = '#000000'
+const inkSoft = '#666666'
+const amber = '#000000'
+const moss = '#000000'
+const rust = '#DC2626'
 
-const cardClass = 'rounded-3xl bg-white/70 backdrop-blur-md border shadow-sm'
-const cardBorder = { borderColor: 'rgba(20,19,16,0.08)' }
+const cardClass = 'bg-white border border-black rounded-none shadow-none'
+const cardBorder = {}
 
 const IMAGES = [
   'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200&q=80',
@@ -29,50 +29,25 @@ const IMAGES = [
 function Spinner() {
   return (
     <div
-      className="w-8 h-8 rounded-full border-2 animate-spin"
-      style={{ borderColor: 'rgba(20,19,16,0.12)', borderTopColor: amber }}
+      className="w-8 h-8 rounded-none border border-black border-t-transparent animate-spin"
     />
   )
 }
 
-const STATUS_MAP = {
-  approved: { color: moss, label: null },
-  completed: { color: moss, label: null },
-  active: { color: moss, label: null },
-  pending: { color: '#B5791F', label: null },
-  rejected: { color: rust, label: null },
-  cancelled: { color: rust, label: null },
-}
-
-// Solid white pill, used sitting directly on the hero photo where a
-// tinted/translucent badge wouldn't have enough contrast against the image.
 function HeroBadge({ status }) {
-  const s = STATUS_MAP[status] || { color: inkSoft }
   return (
     <span
-      className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full capitalize bg-white/90 backdrop-blur"
-      style={{ color: s.color }}
+      className="inline-block text-[10px] font-black uppercase tracking-wider px-3 py-1.5 border border-white bg-white text-black"
     >
       {status}
     </span>
   )
 }
 
-// Tinted pill, used on the light card content below the hero.
 function StatusBadge({ status }) {
-  const map = {
-    approved: { bg: 'rgba(92,122,94,0.14)', color: moss },
-    completed: { bg: 'rgba(92,122,94,0.14)', color: moss },
-    active: { bg: 'rgba(92,122,94,0.14)', color: moss },
-    pending: { bg: 'rgba(232,163,61,0.16)', color: '#B5791F' },
-    rejected: { bg: 'rgba(180,85,31,0.13)', color: rust },
-    cancelled: { bg: 'rgba(180,85,31,0.13)', color: rust },
-  }
-  const s = map[status] || { bg: 'rgba(20,19,16,0.07)', color: inkSoft }
   return (
     <span
-      className="text-[11px] font-semibold px-2.5 py-1 rounded-full capitalize flex-shrink-0"
-      style={{ background: s.bg, color: s.color }}
+      className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 border border-black bg-black text-white capitalize flex-shrink-0"
     >
       {status}
     </span>
@@ -80,16 +55,16 @@ function StatusBadge({ status }) {
 }
 
 function Button({ variant = 'primary', loading, disabled, className = '', children, ...props }) {
-  const styles = {
-    primary: { background: ink, color: '#fff' },
-    danger: { background: rust, color: '#fff' },
-  }
+  const isDanger = variant === 'danger'
   return (
     <button
       {...props}
       disabled={disabled || loading}
-      className={`font-semibold py-3 rounded-full transition-transform hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0 ${className}`}
-      style={styles[variant]}
+      className={`font-black uppercase tracking-widest text-xs py-3.5 border transition-colors rounded-none w-full ${
+        isDanger
+          ? 'bg-red-600 border-red-600 text-white hover:bg-white hover:text-red-600'
+          : 'bg-black border-black text-white hover:bg-white hover:text-black'
+      } ${className}`}
     >
       {loading ? 'Please wait…' : children}
     </button>
@@ -157,7 +132,7 @@ export default function ProgramDetailPage() {
 
   if (loading) return (
     <PublicLayout>
-      <div className="min-h-screen flex items-center justify-center" style={{ background: pageBg }}>
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <Spinner />
       </div>
     </PublicLayout>
@@ -168,38 +143,31 @@ export default function ProgramDetailPage() {
 
   return (
     <PublicLayout>
-      <div className="font-brand" style={{ background: pageBg, color: ink }}>
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-          .font-brand { font-family: 'Plus Jakarta Sans', sans-serif; }
-        `}</style>
-
+      <div className="bg-white text-black font-sans min-h-screen">
+        
         {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl border text-sm font-semibold bg-white/90 backdrop-blur shadow-lg"
-            style={{
-              borderColor: toast.type === 'error' ? 'rgba(180,85,31,0.35)' : 'rgba(92,122,94,0.35)',
-              color: toast.type === 'error' ? rust : moss,
-            }}
+          <div
+            className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 border text-xs font-black uppercase tracking-widest bg-white text-black ${
+              toast.type === 'error' ? 'border-red-600 text-red-600' : 'border-black'
+            }`}
           >
             {toast.type === 'error' ? '✕' : '✓'} {toast.message}
-          </motion.div>
+          </div>
         )}
 
         {/* Hero image */}
-        <div className="relative h-[55vh] overflow-hidden">
-          <img src={img} alt={program.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
-          <div className="absolute top-24 left-6">
-            <Link to="/programs" className="flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors">
-              <HiArrowLeft /> Back to Programs
+        <div className="relative h-[55vh] overflow-hidden border-b border-black">
+          <img src={img} alt={program.title} className="w-full h-full object-cover img-grayscale" />
+          <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+          <div className="absolute top-24 left-6 md:left-12">
+            <Link to="/programs" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white hover:underline">
+              ← Back to Actions
             </Link>
           </div>
-          <div className="absolute bottom-10 left-6 right-6 max-w-7xl mx-auto">
+          <div className="absolute bottom-10 left-6 right-6 max-w-7xl mx-auto md:px-6">
             <HeroBadge status={program.status} />
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mt-4 mb-2">{program.title}</h1>
-            <p className="text-white/75 text-lg">{program.ngo_name}</p>
+            <h1 className="text-4xl md:text-6xl font-brand font-black uppercase tracking-tighter text-white mt-4 mb-2">{program.title}</h1>
+            <p className="text-white font-brand text-md uppercase font-bold tracking-wider">{program.ngo_name}</p>
           </div>
         </div>
 
@@ -208,9 +176,9 @@ export default function ProgramDetailPage() {
           <div className="grid lg:grid-cols-3 gap-12">
             {/* Main */}
             <div className="lg:col-span-2">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                <p className="text-xs uppercase tracking-widest font-bold mb-4" style={{ color: amber }}>About this program</p>
-                <p className="text-lg leading-relaxed whitespace-pre-wrap" style={{ color: inkSoft }}>{program.description}</p>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <p className="text-xs uppercase tracking-widest font-black text-gray-500 mb-4 font-brand">About this program</p>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap text-black">{program.description}</p>
               </motion.div>
             </div>
 
@@ -218,39 +186,37 @@ export default function ProgramDetailPage() {
             <div className="space-y-5">
               {/* Action card */}
               <motion.div
-                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.1 }}
                 className={`${cardClass} p-6 sticky top-24`}
-                style={cardBorder}
               >
                 {/* Capacity bar */}
                 <div className="mb-6">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span style={{ color: inkSoft }}>Participants</span>
-                    <span className="font-semibold" style={{ color: ink }}>{program.current_participants}/{program.capacity}</span>
+                  <div className="flex justify-between text-xs mb-2">
+                    <span className="font-bold text-gray-500 uppercase tracking-wider">Participants</span>
+                    <span className="font-black text-black">{program.current_participants}/{program.capacity}</span>
                   </div>
-                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(20,19,16,0.08)' }}>
+                  <div className="h-2 bg-gray-100 border border-black rounded-none overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1 }}
-                      className="h-full rounded-full"
-                      style={{ background: pct >= 90 ? rust : amber }}
+                      className="h-full bg-black rounded-none"
                     />
                   </div>
                   {program.is_full && (
-                    <p className="text-xs mt-2 font-medium" style={{ color: '#B5791F' }}>
-                      Program is full — joining adds you to the waitlist
+                    <p className="text-xs mt-2 font-bold uppercase tracking-wider text-red-600">
+                      Program is full — waitlist active
                     </p>
                   )}
                 </div>
 
                 {/* Meta */}
-                <div className="space-y-3 mb-6">
+                <div className="space-y-4 mb-6 border-t border-b border-black py-4">
                   {[
-                    { icon: HiOfficeBuilding, label: program.ngo_name },
-                    program.location && { icon: HiLocationMarker, label: program.location },
-                    program.start_date && { icon: HiCalendar, label: `${formatDate(program.start_date)}${program.end_date ? ' → ' + formatDate(program.end_date) : ''}` },
-                  ].filter(Boolean).map(({ icon: Icon, label }, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm" style={{ color: inkSoft }}>
-                      <Icon style={{ color: amber }} className="flex-shrink-0" />
+                    { icon: '🏢', label: program.ngo_name },
+                    program.location && { icon: '📍', label: program.location },
+                    program.start_date && { icon: '📅', label: `${formatDate(program.start_date)}${program.end_date ? ' → ' + formatDate(program.end_date) : ''}` },
+                  ].filter(Boolean).map(({ icon, label }, i) => (
+                    <div key={i} className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-black">
+                      <span className="text-sm">{icon}</span>
                       {label}
                     </div>
                   ))}
@@ -260,8 +226,8 @@ export default function ProgramDetailPage() {
                 {isVolunteer && program.status === 'active' && (
                   myParticipation ? (
                     <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-sm font-medium" style={{ color: moss }}>
-                        <span className="w-2 h-2 rounded-full" style={{ background: moss }} />
+                      <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-black">
+                        <span className="w-2.5 h-2.5 bg-black" />
                         {myParticipation.status === 'waitlisted' ? 'On waitlist' : 'You\'ve joined this program'}
                       </div>
                       <Button variant="danger" className="w-full" onClick={handleLeave} loading={actionLoading}>
@@ -275,8 +241,8 @@ export default function ProgramDetailPage() {
                   )
                 )}
                 {!isVolunteer && (
-                  <Link to="/register" className="block text-center text-sm font-semibold transition-colors" style={{ color: amber }}>
-                    Sign up as volunteer to join →
+                  <Link to="/register" className="block text-center text-xs font-black uppercase tracking-widest text-black underline underline-offset-4">
+                    Sign up to join
                   </Link>
                 )}
               </motion.div>

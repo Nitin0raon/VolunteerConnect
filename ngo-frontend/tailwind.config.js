@@ -4,17 +4,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: '#0B0B0B',
-        'bg-secondary': '#111111',
-        card: '#181818',
-        primary: '#8FAFB2',
-        'primary-hover': '#A8C5C7',
-        'text-primary': '#FFFFFF',
-        'text-secondary': '#B8B8B8',
-        border: 'rgba(255,255,255,0.08)',
+        bg: '#FFFFFF',
+        'bg-secondary': '#000000',
+        card: '#FFFFFF',
+        primary: '#000000',
+        'primary-hover': '#222222',
+        'text-primary': '#000000',
+        'text-secondary': '#666666',
+        border: '#000000',
       },
       fontFamily: {
-        display: ['Georgia', 'serif'],
+        display: ['Outfit', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {

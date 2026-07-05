@@ -54,12 +54,12 @@ export default function CreateProgramPage() {
 
   return (
     <DashboardLayout title="Create Program">
-      <div className="max-w-2xl">
+      <div className="max-w-2xl text-black">
         <AnimatePresence>
           {success && (
             <motion.div
               initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="mb-8 px-5 py-4 bg-primary/10 border border-primary/30 rounded-2xl text-primary text-sm flex items-center gap-3"
+              className="mb-8 px-5 py-4 bg-white border border-black rounded-none text-black text-xs font-black uppercase tracking-widest flex items-center gap-3"
             >
               <span className="text-lg">✓</span>
               Program created successfully! Redirecting…
@@ -67,24 +67,24 @@ export default function CreateProgramPage() {
           )}
         </AnimatePresence>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <div className="mb-10">
-            <p className="text-xs uppercase tracking-widest2 text-primary mb-3">New Program</p>
-            <h1 className="text-4xl font-light text-white mb-2">Create a program</h1>
-            <p className="text-text-secondary">Post a new volunteer opportunity for your NGO.</p>
+            <p className="text-xs uppercase tracking-widest font-black text-gray-500 mb-3">New Program</p>
+            <h1 className="text-4xl font-brand font-black uppercase tracking-tighter text-black mb-2">Create a program</h1>
+            <p className="text-xs font-bold uppercase tracking-wider text-gray-500 font-sans">Post a new volunteer opportunity for your NGO.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Info */}
-            <div className="bg-card border border-subtle rounded-3xl p-8 space-y-5">
-              <h2 className="text-sm font-medium text-white mb-2">Basic Information</h2>
+            <div className="bg-white border border-black rounded-none p-8 space-y-5 shadow-none">
+              <h2 className="text-xs uppercase tracking-widest font-black text-black mb-2 font-brand">Basic Information</h2>
               <Input label="Program Title" placeholder="e.g. Beach Cleanup Drive" value={form.title} onChange={set('title')} error={errors.title} />
               <Textarea label="Description" placeholder="Describe the program, what volunteers will do, what to expect…" value={form.description} onChange={set('description')} error={errors.description} rows={5} />
             </div>
 
             {/* Details */}
-            <div className="bg-card border border-subtle rounded-3xl p-8 space-y-5">
-              <h2 className="text-sm font-medium text-white mb-2">Program Details</h2>
+            <div className="bg-white border border-black rounded-none p-8 space-y-5 shadow-none">
+              <h2 className="text-xs uppercase tracking-widest font-black text-black mb-2 font-brand">Program Details</h2>
               <div className="grid sm:grid-cols-2 gap-5">
                 <Input label="Capacity" type="number" min="1" placeholder="Maximum participants" value={form.capacity} onChange={set('capacity')} error={errors.capacity} />
                 <Input label="Location" placeholder="City, Venue (optional)" value={form.location} onChange={set('location')} />

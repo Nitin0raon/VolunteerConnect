@@ -9,11 +9,11 @@ import { useAuth } from '../../context/AuthContext'
 /* Deliberately dark — this rail stays ink/amber even though the rest of
    the app moved to a light linen theme. The contrast is the point: a solid
    trunk beside a bright canopy, not another light panel. */
-const rail = '#161409'
-const railBorder = 'rgba(255,255,255,0.08)'
-const textPrimary = '#F5F1E6'
-const textSoft = 'rgba(245,241,230,0.5)'
-const amber = '#E8A33D'
+const rail = '#000000'
+const railBorder = '#333333'
+const textPrimary = '#FFFFFF'
+const textSoft = '#888888'
+const amber = '#FFFFFF'
 
 const ngoLinks = [
   { icon: HiUsers, label: 'Join Requests', to: '/ngo/requests' },
@@ -55,13 +55,7 @@ export default function DashboardSidebar({ mobile = false }) {
       {/* Logo */}
       <div className="p-6" style={{ borderBottom: `1px solid ${railBorder}` }}>
         <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm"
-            style={{ background: amber, color: rail }}
-          >
-            V
-          </div>
-          <span className="font-bold tracking-tight">volunect</span>
+          <span className="font-black text-lg tracking-widest text-white uppercase font-brand">volunect</span>
         </div>
       </div>
 
@@ -69,36 +63,38 @@ export default function DashboardSidebar({ mobile = false }) {
       <div className="p-6" style={{ borderBottom: `1px solid ${railBorder}` }}>
         <div className="flex items-center gap-3">
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center font-semibold"
-            style={{ background: 'rgba(232,163,61,0.18)', color: amber }}
+            className="w-10 h-10 border border-white flex items-center justify-center font-bold text-white bg-black"
           >
             {user?.first_name?.[0]}{user?.last_name?.[0]}
           </div>
           <div className="overflow-hidden">
-            <p className="text-sm font-semibold truncate">{user?.first_name} {user?.last_name}</p>
-            <p className="text-xs capitalize" style={{ color: textSoft }}>{user?.role}</p>
+            <p className="text-sm font-semibold truncate uppercase tracking-wider">{user?.first_name} {user?.last_name}</p>
+            <p className="text-xs capitalize font-medium" style={{ color: textSoft }}>{user?.role}</p>
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-2">
         {links.map(({ icon: Icon, label, to }) => (
           <NavLink
             key={to}
             to={to}
             end={to.endsWith('dashboard')}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+            className="flex items-center gap-3 px-4 py-3 rounded-none text-xs font-black uppercase tracking-widest transition-all"
             style={({ isActive }) =>
               isActive
-                ? { background: 'rgba(232,163,61,0.14)', color: amber, border: '1px solid rgba(232,163,61,0.3)' }
+                ? { background: '#FFFFFF', color: '#000000', border: '1px solid #FFFFFF' }
                 : { color: textSoft, border: '1px solid transparent' }
             }
             onMouseEnter={(e) => {
               if (!e.currentTarget.classList.contains('active')) e.currentTarget.style.color = textPrimary
             }}
+            onMouseLeave={(e) => {
+              if (!e.currentTarget.classList.contains('active')) e.currentTarget.style.color = textSoft
+            }}
           >
-            <Icon size={18} />
+            <Icon size={16} />
             {label}
           </NavLink>
         ))}
@@ -108,10 +104,10 @@ export default function DashboardSidebar({ mobile = false }) {
       <div className="p-4" style={{ borderTop: `1px solid ${railBorder}` }}>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm font-medium transition-all hover:bg-white/5"
+          className="flex items-center gap-3 px-4 py-3 w-full rounded-none text-xs font-black uppercase tracking-widest transition-all hover:bg-white/10"
           style={{ color: textSoft }}
         >
-          <HiLogout size={18} />
+          <HiLogout size={16} />
           Logout
         </button>
       </div>

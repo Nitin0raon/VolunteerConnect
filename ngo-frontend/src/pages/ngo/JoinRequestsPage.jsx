@@ -52,11 +52,11 @@ export default function JoinRequestsPage() {
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl border text-sm font-medium ${
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 border text-xs font-black uppercase tracking-widest bg-white ${
               toast.type === 'error'
-                ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                : 'bg-primary/10 border-primary/30 text-primary'
+                ? 'border-red-600 text-red-600'
+                : 'border-black text-black'
             }`}
           >
             {toast.type === 'error' ? '✕' : '✓'} {toast.message}
@@ -65,12 +65,12 @@ export default function JoinRequestsPage() {
       </AnimatePresence>
 
       {/* Header */}
-      <div className="mb-10">
-        <p className="text-xs uppercase tracking-widest2 text-primary mb-3">Volunteers</p>
-        <h1 className="text-4xl font-light text-white mb-6">Join Requests</h1>
+      <div className="mb-10 text-black">
+        <p className="text-xs uppercase tracking-widest font-black text-gray-500 mb-3">Volunteers</p>
+        <h1 className="text-4xl font-brand font-black uppercase tracking-tighter text-black mb-6">Join Requests</h1>
 
         {/* Filter tabs */}
-        <div className="flex gap-2 p-1 bg-card border border-subtle rounded-xl w-fit">
+        <div className="flex border border-black rounded-none p-1 bg-white w-fit font-sans">
           {[
             { value: 'pending', label: '⏳ Pending' },
             { value: 'all', label: '📋 All Requests' },
@@ -78,10 +78,10 @@ export default function JoinRequestsPage() {
             <button
               key={value}
               onClick={() => setFilter(value)}
-              className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-5 py-2 rounded-none text-xs font-black uppercase tracking-widest transition-all ${
                 filter === value
-                  ? 'bg-primary text-bg'
-                  : 'text-text-secondary hover:text-white'
+                  ? 'bg-black text-white'
+                  : 'text-gray-500 hover:text-black'
               }`}
             >
               {label}
@@ -102,37 +102,37 @@ export default function JoinRequestsPage() {
           }
         />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 font-sans">
           {requests.map((req, i) => (
             <motion.div
               key={req.id}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-card border border-subtle rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-5"
+              className="bg-white border border-black rounded-none p-5 flex flex-col sm:flex-row sm:items-center gap-5 shadow-none"
             >
               {/* Volunteer info */}
               <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="w-11 h-11 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center text-primary font-medium flex-shrink-0">
+                <div className="w-11 h-11 border border-black bg-black text-white rounded-none flex items-center justify-center font-brand font-black flex-shrink-0">
                   {req.volunteer_name?.charAt(0) || <HiUser />}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-white">{req.volunteer_name}</p>
-                  <p className="text-xs text-text-secondary">{req.volunteer_email}</p>
+                  <p className="text-xs font-black uppercase tracking-wider text-black">{req.volunteer_name}</p>
+                  <p className="text-[10px] uppercase font-bold text-gray-500">{req.volunteer_email}</p>
                   {req.message && (
-                    <p className="text-xs text-text-secondary/70 mt-1 italic">"{req.message}"</p>
+                    <p className="text-xs text-gray-600 mt-1.5 italic">"{req.message}"</p>
                   )}
                 </div>
               </div>
 
               {/* Program + time */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-white truncate">{req.program_title}</p>
-                <p className="text-xs text-text-secondary mt-0.5">
+                <p className="text-xs font-black uppercase tracking-wider truncate text-black">{req.program_title}</p>
+                <p className="text-[10px] uppercase font-bold text-gray-400 mt-0.5">
                   Requested {formatRelative(req.requested_at)}
                 </p>
                 {req.reviewed_at && (
-                  <p className="text-xs text-text-secondary/60">
+                  <p className="text-[10px] uppercase font-bold text-gray-400">
                     Reviewed {formatDate(req.reviewed_at)}
                   </p>
                 )}
@@ -147,7 +147,7 @@ export default function JoinRequestsPage() {
                     <button
                       onClick={() => handleReview(req.id, 'accept')}
                       disabled={actionLoading === req.id}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-primary/10 border border-primary/30 text-primary rounded-full text-xs font-medium hover:bg-primary/20 transition-all disabled:opacity-50"
+                      className="flex items-center gap-1.5 px-4 py-2 border border-black bg-black text-white hover:bg-white hover:text-black rounded-none text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50"
                     >
                       <HiCheck size={14} />
                       Accept
@@ -155,7 +155,7 @@ export default function JoinRequestsPage() {
                     <button
                       onClick={() => handleReview(req.id, 'reject')}
                       disabled={actionLoading === req.id}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full text-xs font-medium hover:bg-red-500/20 transition-all disabled:opacity-50"
+                      className="flex items-center gap-1.5 px-4 py-2 border border-red-600 bg-red-600 text-white hover:bg-white hover:text-red-600 rounded-none text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50"
                     >
                       <HiX size={14} />
                       Reject

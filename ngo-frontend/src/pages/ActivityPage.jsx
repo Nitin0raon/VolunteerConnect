@@ -5,12 +5,12 @@ import { notificationService } from '../services/dashboardService'
 import { formatRelative, formatDate } from '../utils'
 
 /* Same tokens as HomePage / Navbar / Login / Register / dashboard pages */
-const ink = '#141310'
-const inkSoft = '#6B685F'
-const amber = '#E8A33D'
+const ink = '#000000'
+const inkSoft = '#666666'
+const amber = '#000000'
 
-const cardClass = 'rounded-2xl bg-white/70 backdrop-blur-md border'
-const cardBorder = { borderColor: 'rgba(20,19,16,0.08)' }
+const cardClass = 'bg-white border border-black rounded-none'
+const cardBorder = {}
 
 const ACTION_ICONS = {
   program_created: '➕',
@@ -28,18 +28,17 @@ const ACTION_ICONS = {
 function Spinner() {
   return (
     <div
-      className="w-8 h-8 rounded-full border-2 animate-spin"
-      style={{ borderColor: 'rgba(20,19,16,0.12)', borderTopColor: amber }}
+      className="w-8 h-8 border border-black border-t-transparent animate-spin rounded-none"
     />
   )
 }
 
 function EmptyState({ icon, title, description }) {
   return (
-    <div className={`${cardClass} p-12 text-center`} style={cardBorder}>
+    <div className={`${cardClass} p-12 text-center`}>
       <div className="text-3xl mb-4">{icon}</div>
-      <p className="text-base font-bold mb-1.5" style={{ color: ink }}>{title}</p>
-      <p className="text-sm" style={{ color: inkSoft }}>{description}</p>
+      <p className="text-sm font-black uppercase tracking-widest mb-1.5" style={{ color: ink }}>{title}</p>
+      <p className="text-xs" style={{ color: inkSoft }}>{description}</p>
     </div>
   )
 }
@@ -57,14 +56,9 @@ export default function ActivityPage() {
   return (
     <DashboardLayout title="Activity">
       <div className="font-brand max-w-2xl" style={{ color: ink }}>
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-          .font-brand { font-family: 'Plus Jakarta Sans', sans-serif; }
-        `}</style>
-
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-          <p className="text-xs uppercase tracking-widest font-bold mb-3" style={{ color: amber }}>Timeline</p>
-          <h1 className="text-4xl font-extrabold tracking-tight" style={{ color: ink }}>Activity Feed</h1>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
+          <p className="text-xs uppercase tracking-widest font-black mb-3" style={{ color: ink }}>Timeline</p>
+          <h1 className="text-4xl font-brand font-black uppercase tracking-tighter text-black">Activity Feed</h1>
         </motion.div>
 
         {loading ? (
@@ -73,35 +67,33 @@ export default function ActivityPage() {
           <EmptyState icon="🔔" title="No activity yet" description="Actions you take will appear here." />
         ) : (
           <div className="relative">
-            <div className="absolute left-[19px] top-0 bottom-0 w-px" style={{ background: 'rgba(20,19,16,0.08)' }} />
+            <div className="absolute left-[19px] top-0 bottom-0 w-px bg-black" />
             <div className="space-y-1">
               {items.map((item, i) => (
                 <motion.div
                   key={item.id}
-                  initial={{ opacity: 0, x: -16 }}
+                  initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04 }}
                   className="flex gap-5 group"
                 >
                   <div className="relative flex-shrink-0 mt-4">
                     <div
-                      className={`w-10 h-10 ${cardClass} flex items-center justify-center text-lg transition-colors`}
-                      style={cardBorder}
+                      className={`w-10 h-10 ${cardClass} flex items-center justify-center text-lg bg-white`}
                     >
                       {ACTION_ICONS[item.action] || '✦'}
                     </div>
                   </div>
                   <div
-                    className={`flex-1 ${cardClass} p-4 mb-3 shadow-sm transition-colors group-hover:border-amber-500/20`}
-                    style={cardBorder}
+                    className={`flex-1 ${cardClass} p-4 mb-3 shadow-none bg-white`}
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <p className="text-sm leading-relaxed" style={{ color: ink }}>{item.description}</p>
-                      <span className="text-xs flex-shrink-0 mt-0.5" style={{ color: inkSoft }}>
+                      <p className="text-xs font-medium leading-relaxed text-black">{item.description}</p>
+                      <span className="text-[10px] uppercase tracking-wider font-bold flex-shrink-0 mt-0.5 text-gray-500">
                         {formatRelative(item.created_at)}
                       </span>
                     </div>
-                    <p className="text-xs mt-1.5" style={{ color: 'rgba(107,104,95,0.65)' }}>{formatDate(item.created_at)}</p>
+                    <p className="text-[10px] uppercase tracking-wider font-semibold mt-1.5 text-gray-400">{formatDate(item.created_at)}</p>
                   </div>
                 </motion.div>
               ))}

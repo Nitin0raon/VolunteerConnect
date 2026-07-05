@@ -19,38 +19,37 @@ import { notificationService } from '../../services/dashboardService'
    - icon chips switched from a faint 14%-opacity amber wash to a solid
      amber fill with ink icons — a translucent tint was exactly why icons
      were hard to see. */
-const ink = '#141310'
-const inkSoft = '#57544A'
-const amber = '#E8A33D'
-const amberText = '#A6690F'
-const moss = '#3F5C41'
-const rust = '#9C4315'
+const ink = '#000000'
+const inkSoft = '#666666'
+const amber = '#000000'
+const amberText = '#000000'
+const moss = '#000000'
+const rust = '#DC2626'
 
-const cardClass = 'rounded-2xl bg-white border shadow-sm'
-const cardBorder = { borderColor: 'rgba(20,19,16,0.12)' }
+const cardClass = 'bg-white border border-black rounded-none shadow-none'
+const cardBorder = {}
 
 function Spinner() {
   return (
     <div
-      className="w-8 h-8 rounded-full border-2 animate-spin"
-      style={{ borderColor: 'rgba(20,19,16,0.15)', borderTopColor: amberText }}
+      className="w-8 h-8 border border-black border-t-transparent animate-spin rounded-none"
     />
   )
 }
 
 function StatusBadge({ status }) {
   const map = {
-    approved: { bg: 'rgba(63,92,65,0.16)', color: moss },
-    completed: { bg: 'rgba(63,92,65,0.16)', color: moss },
-    pending: { bg: 'rgba(166,105,15,0.16)', color: amberText },
-    rejected: { bg: 'rgba(156,67,21,0.14)', color: rust },
-    cancelled: { bg: 'rgba(156,67,21,0.14)', color: rust },
+    approved: { bg: '#000000', color: '#ffffff', border: '#000000' },
+    completed: { bg: '#000000', color: '#ffffff', border: '#000000' },
+    pending: { bg: '#f3f4f6', color: '#000000', border: '#000000' },
+    rejected: { bg: '#fef2f2', color: '#dc2626', border: '#dc2626' },
+    cancelled: { bg: '#fef2f2', color: '#dc2626', border: '#dc2626' },
   }
-  const s = map[status] || { bg: 'rgba(20,19,16,0.08)', color: inkSoft }
+  const s = map[status] || { bg: '#ffffff', color: '#000000', border: '#000000' }
   return (
     <span
-      className="text-[11px] font-bold px-2.5 py-1 rounded-full capitalize flex-shrink-0"
-      style={{ background: s.bg, color: s.color }}
+      className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 border capitalize flex-shrink-0"
+      style={{ background: s.bg, color: s.color, borderColor: s.border }}
     >
       {status}
     </span>
@@ -60,8 +59,7 @@ function StatusBadge({ status }) {
 function IconChip({ children, size = 10 }) {
   return (
     <div
-      className={`w-${size} h-${size} rounded-xl flex items-center justify-center flex-shrink-0`}
-      style={{ background: amber, color: ink }}
+      className={`w-${size} h-${size} border border-black flex items-center justify-center flex-shrink-0 bg-black text-white rounded-none`}
     >
       {children}
     </div>
@@ -70,12 +68,12 @@ function IconChip({ children, size = 10 }) {
 
 function StatCard({ label, value, icon }) {
   return (
-    <div className={`${cardClass} p-5`} style={cardBorder}>
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: amber, color: ink }}>
+    <div className={`${cardClass} p-5`}>
+      <div className="w-10 h-10 border border-black flex items-center justify-center mb-4 bg-black text-white rounded-none">
         {icon}
       </div>
-      <p className="text-2xl font-extrabold tracking-tight" style={{ color: ink }}>{value ?? '—'}</p>
-      <p className="text-xs mt-1 font-medium" style={{ color: inkSoft }}>{label}</p>
+      <p className="text-2xl font-brand font-black uppercase tracking-tight text-black">{value ?? '—'}</p>
+      <p className="text-[10px] uppercase tracking-widest font-black text-gray-500 mt-1">{label}</p>
     </div>
   )
 }
@@ -105,21 +103,17 @@ export default function VolunteerDashboard() {
 
   return (
     <DashboardLayout title="Dashboard">
-      <div className="font-brand" style={{ color: ink }}>
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-          .font-brand { font-family: 'Plus Jakarta Sans', sans-serif; }
-        `}</style>
+      <div className="font-brand text-black bg-white">
 
         {loading ? (
           <div className="flex items-center justify-center h-64"><Spinner /></div>
         ) : (
           <div className="space-y-10">
             {/* Greeting */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <p className="text-sm mb-1 font-medium" style={{ color: inkSoft }}>Good to see you,</p>
-              <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: ink }}>
-                {user?.first_name} {user?.last_name} <span style={{ color: amberText }}>✦</span>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+              <p className="text-xs uppercase tracking-widest font-black text-gray-500 mb-1">Good to see you,</p>
+              <h1 className="text-3xl font-brand font-black uppercase tracking-tighter text-black">
+                {user?.first_name} {user?.last_name}
               </h1>
             </motion.div>
 
@@ -132,7 +126,7 @@ export default function VolunteerDashboard() {
                 {[
                   { label: 'Programs Joined', value: stats.joined_programs, icon: <HiCollection size={18} /> },
                   { label: 'Active Programs', value: stats.active_programs, icon: <HiStar size={18} /> },
-                  { label: 'Completed', value: stats.completed_programs, icon: <HiDocumentText size={18} /> },
+                  { label: 'Completed', value: stats.completed_programs, icon: <HiStar size={18} /> },
                   { label: 'Certificates', value: stats.certificates_earned, icon: <HiStar size={18} /> },
                 ].map((s, i) => (
                   <motion.div key={i} variants={fadeUp}>
@@ -146,29 +140,28 @@ export default function VolunteerDashboard() {
               {/* Recent Participations */}
               <div className="lg:col-span-3">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold" style={{ color: ink }}>My Programs</h2>
-                  <Link to="/volunteer/participations" className="text-xs font-bold" style={{ color: amberText }}>
-                    View all →
+                  <h2 className="text-xs uppercase tracking-widest font-black text-black font-brand">My Programs</h2>
+                  <Link to="/volunteer/participations" className="text-xs font-black uppercase tracking-widest text-black underline underline-offset-2">
+                    View all
                   </Link>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-3 font-sans">
                   {participations.length === 0 ? (
-                    <div className={`${cardClass} p-8 text-center`} style={cardBorder}>
-                      <p className="text-sm mb-3 font-medium" style={{ color: inkSoft }}>You haven't joined any programs yet.</p>
-                      <Link to="/programs" className="text-sm font-bold" style={{ color: amberText }}>Browse programs →</Link>
+                    <div className={`${cardClass} p-8 text-center`}>
+                      <p className="text-xs mb-3 font-bold text-gray-500">You haven't joined any programs yet.</p>
+                      <Link to="/programs" className="text-xs font-black uppercase tracking-widest text-black underline underline-offset-2">Browse programs</Link>
                     </div>
                   ) : participations.map((p) => (
                     <motion.div
-                      key={p.id} whileHover={{ x: 4 }}
+                      key={p.id} whileHover={{ x: 2 }}
                       className={`${cardClass} p-4 flex items-center gap-4`}
-                      style={cardBorder}
                     >
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: amber, color: ink }}>
+                      <div className="w-10 h-10 border border-black bg-black text-white flex items-center justify-center flex-shrink-0 rounded-none">
                         <HiCollection size={18} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate" style={{ color: ink }}>{p.program_title}</p>
-                        <p className="text-xs font-medium" style={{ color: inkSoft }}>{formatDate(p.joined_at)}</p>
+                        <p className="text-xs font-black uppercase tracking-wider truncate text-black">{p.program_title}</p>
+                        <p className="text-[10px] uppercase font-bold text-gray-500 mt-1">{formatDate(p.joined_at)}</p>
                       </div>
                       <StatusBadge status={p.status} />
                     </motion.div>
@@ -179,20 +172,20 @@ export default function VolunteerDashboard() {
               {/* Activity Feed */}
               <div className="lg:col-span-2">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold" style={{ color: ink }}>Recent Activity</h2>
-                  <Link to="/volunteer/activity" className="text-xs font-bold" style={{ color: amberText }}>
-                    View all →
+                  <h2 className="text-xs uppercase tracking-widest font-black text-black font-brand">Recent Activity</h2>
+                  <Link to="/volunteer/activity" className="text-xs font-black uppercase tracking-widest text-black underline underline-offset-2">
+                    View all
                   </Link>
                 </div>
-                <div className={`${cardClass} p-5 space-y-4`} style={cardBorder}>
+                <div className={`${cardClass} p-5 space-y-4`}>
                   {activity.length === 0 ? (
-                    <p className="text-sm text-center py-8 font-medium" style={{ color: inkSoft }}>No activity yet.</p>
+                    <p className="text-xs text-center py-8 font-bold text-gray-500">No activity yet.</p>
                   ) : activity.map((a) => (
-                    <div key={a.id} className="flex gap-3 text-sm">
-                      <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: amberText }} />
+                    <div key={a.id} className="flex gap-3 text-xs font-sans">
+                      <div className="w-1.5 h-1.5 bg-black mt-1.5 flex-shrink-0 rounded-none" />
                       <div>
-                        <p className="leading-relaxed font-medium" style={{ color: ink }}>{a.description}</p>
-                        <p className="text-xs mt-0.5 font-medium" style={{ color: inkSoft }}>{formatRelative(a.created_at)}</p>
+                        <p className="leading-relaxed font-bold text-black">{a.description}</p>
+                        <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400 mt-1">{formatRelative(a.created_at)}</p>
                       </div>
                     </div>
                   ))}
@@ -202,7 +195,7 @@ export default function VolunteerDashboard() {
 
             {/* Quick actions */}
             <div>
-              <h2 className="text-lg font-bold mb-5" style={{ color: ink }}>Quick Actions</h2>
+              <h2 className="text-xs uppercase tracking-widest font-black text-black mb-5 font-brand">Quick Actions</h2>
               <div className="grid sm:grid-cols-3 gap-4">
                 {[
                   { label: 'Browse Programs', href: '/programs', desc: 'Find new volunteer opportunities', icon: '🔍' },
@@ -210,10 +203,10 @@ export default function VolunteerDashboard() {
                   { label: 'Profile', href: '/volunteer/profile', desc: 'Update your information', icon: '👤' },
                 ].map(({ label, href, desc, icon }) => (
                   <Link key={label} to={href}>
-                    <motion.div whileHover={{ y: -4 }} className={`${cardClass} p-5 group cursor-pointer h-full`} style={cardBorder}>
+                    <motion.div whileHover={{ y: -2 }} className={`${cardClass} p-5 group cursor-pointer h-full`}>
                       <div className="text-2xl mb-3">{icon}</div>
-                      <p className="text-sm font-bold mb-1" style={{ color: ink }}>{label}</p>
-                      <p className="text-xs font-medium" style={{ color: inkSoft }}>{desc}</p>
+                      <p className="text-xs font-black uppercase tracking-widest text-black mb-1 font-brand">{label}</p>
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider leading-relaxed">{desc}</p>
                     </motion.div>
                   </Link>
                 ))}
