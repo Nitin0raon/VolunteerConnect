@@ -83,6 +83,15 @@ class ProgramService:
         }
         program = ProgramRepository.update(program, **validated_data)
 
+        # Promote waitlisted volunteers if capacity was increased
+        if new_capacity is not None and new_capacity > old_values['capacity']:
+            from services.participation_service import ParticipationService
+            program.refresh_from_db()
+            while program.current_participants < program.capacity:
+                if not ParticipationService._promote_from_waitlist(program):
+                    break
+                program.refresh_from_db()
+
         ActivityService.log(
             user=user,
             action=ActivityAction.PROGRAM_UPDATED,

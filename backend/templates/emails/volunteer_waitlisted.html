@@ -1,0 +1,8 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">⏳ Added to Waitlist</div>
+<p>Hi {{ volunteer_name }},</p>
+<p>Your request to join <strong>{{ program_title }}</strong> by <strong>{{ ngo_name }}</strong> has been accepted, but since the program is currently full, you've been placed on the waitlist at position <strong>{{ waitlist_position }}</strong>.</p>
+<p>We'll notify you automatically if a spot opens up!</p>
+<a class="button" href="{{ frontend_url }}/programs">View Program</a>
+{% endblock %}

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HiCheck, HiX, HiClock, HiUser } from 'react-icons/hi'
 import DashboardLayout from '../../components/layout/DashboardLayout'
-import { Spinner, EmptyState, Badge } from '../../components/ui/index'
+import { Spinner, EmptyState, Badge, Pagination } from '../../components/ui/index'
 import api from '../../services/api'
 import { formatRelative, formatDate } from '../../utils'
 
@@ -12,6 +12,8 @@ export default function JoinRequestsPage() {
   const [actionLoading, setActionLoading] = useState(null)
   const [filter, setFilter] = useState('pending')
   const [toast, setToast] = useState(null)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type })
@@ -22,29 +24,38 @@ export default function JoinRequestsPage() {
     setLoading(true)
     try {
       const url = filter === 'pending'
-        ? '/participation/requests/pending/'
-        : '/participation/requests/all/'
+        ? `/participation/requests/pending/?page=${page}`
+        : `/participation/requests/all/?page=${page}`
       const { data } = await api.get(url)
-      setRequests(data.results || data.data || [])
+      setRequests(data.results || [])
+      setTotalPages(Math.ceil((data.count || 0) / 10))
     } catch {
       setRequests([])
+      setTotalPages(1)
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => { fetchRequests() }, [filter])
+  useEffect(() => {
+    setPage(1)
+  }, [filter])
+
+  useEffect(() => {
+    fetchRequests()
+  }, [filter, page])
 
   const handleReview = async (participationId, action) => {
     setActionLoading(participationId)
     try {
-      await api.post(`/participation/requests/${participationId}/review/`, { action })
-      showToast(action === 'accept' ? 'Request accepted!' : 'Request rejected.')
+      const { data } = await api.post(`/participation/requests/${participationId}/review/`, { action })
+      showToast(data.message || (action === 'accept' ? 'Request accepted!' : 'Request rejected.'))
       fetchRequests()
     } catch (err) {
       showToast(err.response?.data?.message || 'Action failed.', 'error')
     } finally {
-      setActionLoading(null) }
+      setActionLoading(null)
+    }
   }
 
   return (
@@ -165,6 +176,13 @@ export default function JoinRequestsPage() {
               </div>
             </motion.div>
           ))}
+          {totalPages > 1 && (
+            <Pagination
+              current={page}
+              total={totalPages}
+              onPage={setPage}
+            />
+          )}
         </div>
       )}
     </DashboardLayout>

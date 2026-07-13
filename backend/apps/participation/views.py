@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from permissions.role_permissions import IsVolunteer, IsNGO
+from permissions.role_permissions import IsVolunteer, IsNGO, IsApprovedNGO
 from utils.responses import success_response, created_response
 from services.participation_service import ParticipationService
 from .serializers import ParticipationSerializer, JoinRequestSerializer, ReviewRequestSerializer
@@ -63,7 +63,7 @@ class MyParticipationsView(ListAPIView):
 class NGOPendingRequestsView(ListAPIView):
     """NGO views all PENDING join requests for their programs."""
 
-    permission_classes = [IsAuthenticated, IsNGO]
+    permission_classes = [IsAuthenticated, IsApprovedNGO]
     serializer_class = ParticipationSerializer
 
     def get_queryset(self):
@@ -80,7 +80,7 @@ class NGOPendingRequestsView(ListAPIView):
 class NGOAllRequestsView(ListAPIView):
     """NGO views all join requests (all statuses) for their programs."""
 
-    permission_classes = [IsAuthenticated, IsNGO]
+    permission_classes = [IsAuthenticated, IsApprovedNGO]
     serializer_class = ParticipationSerializer
 
     def get_queryset(self):
@@ -97,7 +97,7 @@ class NGOAllRequestsView(ListAPIView):
 class ReviewJoinRequestView(APIView):
     """NGO accepts or rejects a specific join request."""
 
-    permission_classes = [IsAuthenticated, IsNGO]
+    permission_classes = [IsAuthenticated, IsApprovedNGO]
 
     def post(self, request, participation_id):
         serializer = ReviewRequestSerializer(data=request.data)
@@ -109,7 +109,16 @@ class ReviewJoinRequestView(APIView):
             reason=serializer.validated_data.get('reason', ''),
         )
         action = serializer.validated_data['action']
+        
+        from apps.participation.models import ParticipationStatus
+        if action == 'accept' and participation.status == ParticipationStatus.WAITLISTED:
+            message = 'Request accepted but program is full. Volunteer has been added to the waitlist.'
+        elif action == 'accept':
+            message = 'Request accepted successfully.'
+        else:
+            message = 'Request rejected successfully.'
+
         return success_response(
             data=ParticipationSerializer(participation).data,
-            message=f'Request {"accepted" if action == "accept" else "rejected"} successfully.',
+            message=message,
         )

@@ -99,3 +99,19 @@ class EmailService:
             },
             to_email=participation.volunteer.email,
         )
+
+    @classmethod
+    def send_volunteer_waitlisted(cls, participation):
+        cls._send(
+            subject=f"You've been waitlisted for {participation.program.title}",
+            template_name='emails/volunteer_waitlisted.html',
+            context={
+                'volunteer_name': participation.volunteer.get_full_name(),
+                'program_title': participation.program.title,
+                'ngo_name': participation.program.ngo.organization_name,
+                'waitlist_position': participation.waitlist_position,
+                'frontend_url': settings.FRONTEND_URL,
+            },
+            to_email=participation.volunteer.email,
+        )
+

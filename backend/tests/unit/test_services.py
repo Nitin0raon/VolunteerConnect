@@ -192,3 +192,76 @@ class ParticipationServiceTest(TestCase):
     def test_leave_not_enrolled_raises(self):
         with self.assertRaises(ConflictException):
             ParticipationService.leave_program(self.volunteer, self.program.id)
+
+    @patch('services.participation_service.EmailService.send_volunteer_joined')
+    @patch('services.participation_service.invalidate_volunteer_dashboard')
+    @patch('services.participation_service.invalidate_ngo_dashboard')
+    def test_waitlist_fifo_ordering_robustness(self, m1, m2, mock_joined):
+        v2 = make_volunteer('v2@test.com')
+        v3 = make_volunteer('v3@test.com')
+        v4 = make_volunteer('v4@test.com')
+        v5 = make_volunteer('v5@test.com')
+
+        # Fill program (capacity=2)
+        p1 = ParticipationService.request_join(self.volunteer, self.program.id)
+        ParticipationService.review_request(p1.id, self.ngo_user, 'accept')
+        p2 = ParticipationService.request_join(v2, self.program.id)
+        ParticipationService.review_request(p2.id, self.ngo_user, 'accept')
+
+        # Waitlist 3 volunteers: v3, v4, v5
+        p3 = ParticipationService.request_join(v3, self.program.id)
+        ParticipationService.review_request(p3.id, self.ngo_user, 'accept') # pos 1
+        p4 = ParticipationService.request_join(v4, self.program.id)
+        ParticipationService.review_request(p4.id, self.ngo_user, 'accept') # pos 2
+        p5 = ParticipationService.request_join(v5, self.program.id)
+        ParticipationService.review_request(p5.id, self.ngo_user, 'accept') # pos 3
+
+        # v4 leaves waitlist (pos 2)
+        ParticipationService.leave_program(v4, self.program.id)
+
+        # Promote one volunteer by having v1 leave the program
+        with patch('services.participation_service.EmailService.send_waitlist_promoted') as mock_promoted:
+            ParticipationService.leave_program(self.volunteer, self.program.id)
+            # v3 (pos 1) should be promoted
+            p3.refresh_from_db()
+            self.assertEqual(p3.status, ParticipationStatus.JOINED)
+            self.assertIsNone(p3.waitlist_position)
+
+        # Now waitlist a new volunteer v6
+        v6 = make_volunteer('v6@test.com')
+        p6 = ParticipationService.request_join(v6, self.program.id)
+        p6 = ParticipationService.review_request(p6.id, self.ngo_user, 'accept')
+        
+        # Verify p6 has a higher waitlist position than p5
+        p5.refresh_from_db()
+        self.assertEqual(p5.status, ParticipationStatus.WAITLISTED)
+        self.assertTrue(p6.waitlist_position > p5.waitlist_position, "Waitlist did not maintain FIFO ordering.")
+
+    @patch('services.program_service.invalidate_ngo_dashboard')
+    @patch('services.participation_service.EmailService.send_volunteer_joined')
+    @patch('services.participation_service.EmailService.send_waitlist_promoted')
+    @patch('services.participation_service.invalidate_volunteer_dashboard')
+    def test_update_capacity_promotes_waitlist(self, m1, m2, mock_joined, mock_promoted):
+        v2 = make_volunteer('v2@test.com')
+        v3 = make_volunteer('v3@test.com')
+        
+        # Fill program (capacity=2)
+        p1 = ParticipationService.request_join(self.volunteer, self.program.id)
+        ParticipationService.review_request(p1.id, self.ngo_user, 'accept')
+        p2 = ParticipationService.request_join(v2, self.program.id)
+        ParticipationService.review_request(p2.id, self.ngo_user, 'accept')
+        # Add one to waitlist
+        p3 = ParticipationService.request_join(v3, self.program.id)
+        ParticipationService.review_request(p3.id, self.ngo_user, 'accept')
+
+        p3.refresh_from_db()
+        self.assertEqual(p3.status, ParticipationStatus.WAITLISTED)
+
+        # Increase capacity to 3
+        ProgramService.update_program(self.program.id, self.ngo_user, {'capacity': 3})
+        
+        # Verify p3 is auto-promoted to JOINED
+        p3.refresh_from_db()
+        self.assertEqual(p3.status, ParticipationStatus.JOINED)
+        self.assertIsNone(p3.waitlist_position)
+

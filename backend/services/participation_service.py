@@ -108,11 +108,12 @@ class ParticipationService:
         if action == 'accept':
             if program.is_full:
                 # Put on waitlist instead
-                waitlist_count = Participation.objects.filter(
+                from django.db.models import Max
+                max_pos = Participation.objects.filter(
                     program=program, status=ParticipationStatus.WAITLISTED
-                ).count()
+                ).aggregate(Max('waitlist_position'))['waitlist_position__max'] or 0
                 participation.status = ParticipationStatus.WAITLISTED
-                participation.waitlist_position = waitlist_count + 1
+                participation.waitlist_position = max_pos + 1
                 participation.reviewed_at = now
                 participation.save()
 
@@ -122,6 +123,7 @@ class ParticipationService:
                     description=f'Your request for "{program.title}" was accepted but the program is full. You\'ve been added to the waitlist.',
                     metadata={'program_id': program.id},
                 )
+                EmailService.send_volunteer_waitlisted(participation)
                 logger.info(f"ParticipationService: {participation.volunteer.email} waitlisted for program {program.id}")
             else:
                 participation.status = ParticipationStatus.JOINED
@@ -212,11 +214,11 @@ class ParticipationService:
         logger.info(f"ParticipationService: volunteer {volunteer.email} left program {program_id}")
 
     @staticmethod
-    def _promote_from_waitlist(program):
-        """Promote first waitlisted volunteer to joined."""
+    def _promote_from_waitlist(program) -> bool:
+        """Promote first waitlisted volunteer to joined. Returns True if promoted, False otherwise."""
         next_in_line = ParticipationRepository.get_first_waitlisted(program)
         if not next_in_line:
-            return
+            return False
 
         ParticipationRepository.update(
             next_in_line,
@@ -234,6 +236,7 @@ class ParticipationService:
         )
         EmailService.send_waitlist_promoted(next_in_line)
         invalidate_volunteer_dashboard(next_in_line.volunteer_id)
+        return True
 
     @staticmethod
     def get_volunteer_participations(volunteer):
